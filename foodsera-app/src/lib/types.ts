@@ -1,5 +1,4 @@
-
-export type UserRole = 'customer' | 'restaurant' | 'delivery' | 'admin' | 'driver';
+export type UserRole = 'customer' | 'restaurant' | 'delivery' | 'admin' | 'driver' | 'main_admin';
 
 export interface User {
   _id: string;
@@ -17,12 +16,14 @@ export interface User {
   address?: string;
   phoneNumber?: string;
   avatar?: string;
+  createdAt?: string;
 }
 
 export interface Category {
   _id: string;
   name: string;
   image: string;
+  createdAt?: string;
 }
 
 export interface Restaurant {

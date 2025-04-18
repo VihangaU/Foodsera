@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h5 className="text-xl font-bold mb-4">Foodsera</h5>
+            <h5 className="text-xl font-bold mb-4">Foodix</h5>
             <p className="text-gray-300 mb-4">
               Connecting you to the best restaurants in your area, delivering
               your favorite meals right to your doorstep.
@@ -103,14 +103,14 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center">
                 <Mail className="mr-2 h-5 w-5 text-foodix-400" />
-                <span className="text-gray-300">support@foodsera.com</span>
+                <span className="text-gray-300">support@foodix.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>© {new Date().getFullYear()} Foodsera. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Foodix. All rights reserved.</p>
           <div className="mt-2 space-x-4">
             <Link to="/terms" className="hover:text-foodix-400">
               Terms of Service

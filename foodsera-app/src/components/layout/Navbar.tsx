@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, ShoppingCart, User, ChevronDown, LogOut } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -40,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ openCart, itemCount }) => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl font-bold text-foodix-600">
-              Foodsera
+              Foodix
             </span>
           </Link>
 
@@ -131,6 +130,15 @@ const Navbar: React.FC<NavbarProps> = ({ openCart, itemCount }) => {
                     </DropdownMenuItem>
                   )}
                   
+                  {user.role === 'main_admin' && (
+                    <DropdownMenuItem>
+                      <Link to="/main-admin" className="w-full">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  
                   {user.role === 'driver' && (
                     <DropdownMenuItem>
                       <Link to="/delivery" className="w-full">Delivery Dashboard</Link>
@@ -192,6 +200,14 @@ const Navbar: React.FC<NavbarProps> = ({ openCart, itemCount }) => {
               {isAuthenticated && user?.role === 'restaurant' && (
                 <Link to="/admin" className="text-gray-700" onClick={toggleMenu}>
                   Restaurant Dashboard
+                </Link>
+              )}
+              {isAuthenticated && user?.role === 'main_admin' && (
+                <Link to="/main-admin" className="text-gray-700" onClick={toggleMenu}>
+                  <div className="flex items-center">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Admin Dashboard
+                  </div>
                 </Link>
               )}
               {isAuthenticated && user?.role === 'driver' && (

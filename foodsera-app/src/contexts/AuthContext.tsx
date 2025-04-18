@@ -21,19 +21,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Check if token exists
-    const token = localStorage.getItem('foodix_token');
+    const token = localStorage.getItem('token');
     if (token) {
-      fetchUserProfile(token);
+      fetchUserProfile();
     } else {
       setIsLoading(false);
     }
   }, []);
 
-  const fetchUserProfile = async (token: string) => {
+  const fetchUserProfile = async () => {
     try {
-      // Store token for API requests
-      localStorage.setItem('token', token);
-      
       // Get user profile using token
       const userData = await authAPI.getProfile();
       setUser(userData);
@@ -52,14 +49,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await authAPI.login({ email, password });
       
       // Save token
+      localStorage.setItem('token', response.token);
       localStorage.setItem('foodix_token', response.token);
       
-      await fetchUserProfile(response.token);
+      // Get user profile with token
+      await fetchUserProfile();
       
-      toast({
-        title: "Logged in successfully!",
-        description: `Welcome back, ${user?.name}!`,
-      });
+      // Routing logic based on user role
+      if (user?.role === 'main_admin') {
+        toast({
+          title: "Logged in as Main Admin!",
+          description: `Welcome back, ${user.name}!`,
+        });
+        window.location.href = '/main-admin';
+      } else if (user?.role === 'restaurant') {
+        toast({
+          title: "Logged in as Restaurant Owner!",
+          description: `Welcome back, ${user.name}!`,
+        });
+        window.location.href = '/admin';
+      } else if (user?.role === 'delivery' || user?.role === 'driver') {
+        toast({
+          title: "Logged in as Delivery Driver!",
+          description: `Welcome back, ${user.name}!`,
+        });
+        window.location.href = '/delivery';
+      } else {
+        toast({
+          title: "Logged in successfully!",
+          description: `Welcome back, ${user?.name || 'User'}!`,
+        });
+      }
     } catch (error) {
       toast({
         title: "Login failed",
@@ -83,9 +103,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       
       // Save token
+      localStorage.setItem('token', response.token);
       localStorage.setItem('foodix_token', response.token);
       
-      await fetchUserProfile(response.token);
+      await fetchUserProfile();
       
       toast({
         title: "Registration successful!",

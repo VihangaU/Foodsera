@@ -166,7 +166,7 @@ const Index: React.FC = () => {
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <h2 className="text-3xl font-bold mb-4">
-                Get the Foodsera App
+                Get the Foodix App
               </h2>
               <p className="text-xl mb-6 opacity-90">
                 Order food on the go with our mobile app. Available for iOS and Android.

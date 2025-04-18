@@ -13,40 +13,46 @@ const LoginPage: React.FC = () => {
   const { login, register, isAuthenticated, user, isLoading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('login');
 
-  // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [isLoginLoading, setIsLoginLoading] = useState(false);
 
-  // Register form state
   const [registerName, setRegisterName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerRole, setRegisterRole] = useState<UserRole>('customer');
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
-  // If already logged in, redirect to appropriate dashboard
   useEffect(() => {
     if (isAuthenticated && user) {
-      switch (user.role) {
-        case 'restaurant':
-          navigate('/admin');
-          break;
-        case 'driver':
-        case 'delivery':
-          navigate('/delivery');
-          break;
-        default:
-          navigate('/');
-      }
+      redirectBasedOnRole(user.role);
     }
   }, [isAuthenticated, user, navigate]);
+
+  const redirectBasedOnRole = (role: string) => {
+    console.log("Redirecting based on role:", role);
+    switch (role) {
+      case 'main_admin':
+        navigate('/main-admin');
+        break;
+      case 'restaurant':
+        navigate('/admin');
+        break;
+      case 'driver':
+      case 'delivery':
+        navigate('/delivery');
+        break;
+      default:
+        navigate('/');
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoginLoading(true);
     try {
       await login(loginEmail, loginPassword);
+      // The auth context will handle redirection after successful login
     } catch (error) {
       console.error('Login failed:', error);
     } finally {
@@ -59,6 +65,7 @@ const LoginPage: React.FC = () => {
     setIsRegisterLoading(true);
     try {
       await register(registerName, registerEmail, registerPassword, registerRole);
+      // The auth context will handle redirection after successful registration
     } catch (error) {
       console.error('Registration failed:', error);
     } finally {
@@ -78,7 +85,7 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Foodsera</h2>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Foodix</h2>
           <p className="mt-2 text-sm text-gray-600">Your favorite food delivery app</p>
         </div>
 

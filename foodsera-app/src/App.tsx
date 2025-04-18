@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,6 +20,7 @@ import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import DeliveryDashboard from "./pages/delivery/DeliveryDashboard";
+import MainAdminDashboard from "./pages/admin/MainAdminDashboard";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import MyOrdersPage from "./pages/MyOrdersPage";
@@ -34,14 +34,11 @@ const App = () => {
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
-  // Add to cart - Modified to support multiple restaurants
   const addToCart = (restaurantId: string, menuItem: MenuItem) => {
     setCart(currentCart => {
-      // Check if item already exists in cart
       const existingItem = currentCart.items.find(item => item.menuItemId === menuItem._id);
       
       if (existingItem) {
-        // Increment quantity of existing item
         return {
           ...currentCart,
           items: currentCart.items.map(item => 
@@ -51,7 +48,6 @@ const App = () => {
           )
         };
       } else {
-        // Add new item with restaurant information
         return {
           ...currentCart,
           restaurantId,
@@ -69,11 +65,9 @@ const App = () => {
       }
     });
     
-    // Open cart after adding item
     openCart();
   };
 
-  // Update quantity
   const updateQuantity = (id: string, quantity: number) => {
     setCart(currentCart => ({
       ...currentCart,
@@ -83,7 +77,6 @@ const App = () => {
     }));
   };
 
-  // Remove item
   const removeItem = (id: string) => {
     setCart(currentCart => {
       const newItems = currentCart.items.filter(item => item._id !== id);
@@ -94,7 +87,6 @@ const App = () => {
     });
   };
 
-  // Clear cart
   const clearCart = () => {
     setCart({ items: [], restaurantId: null });
   };
@@ -131,6 +123,11 @@ const App = () => {
                   <Route path="/delivery/*" element={
                     <ProtectedRoute allowedRoles={['delivery']}>
                       <DeliveryDashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/main-admin/*" element={
+                    <ProtectedRoute allowedRoles={['main_admin']}>
+                      <MainAdminDashboard />
                     </ProtectedRoute>
                   } />
                   <Route path="*" element={<NotFound />} />

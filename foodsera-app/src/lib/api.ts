@@ -1,7 +1,7 @@
 import { Cart, CartItem, MenuItem, Order, Restaurant, User } from './types';
 
 // Base API URL
-const API_URL = '';
+const API_URL = 'http://localhost:5001/api';
 
 // Get token from local storage
 const getToken = () => localStorage.getItem('token');
@@ -75,6 +75,12 @@ export const authAPI = {
     }
 
     return response.json();
+  },
+  
+  // Admin specific methods
+  getAllUsers: async (role?: string) => {
+    const queryString = role ? `?role=${role}` : '';
+    return fetchWithAuth(`/auth/users${queryString}`);
   },
 };
 
@@ -336,5 +342,103 @@ export const deliveryAPI = {
       method: 'PUT',
       body: JSON.stringify(statusData),
     });
+  },
+};
+
+// Admin API for main admin dashboard
+export const adminAPI = {
+  // Category management
+  getAllCategories: async () => {
+    return fetchWithAuth('/admin/categories');
+  },
+  
+  createCategory: async (categoryData: FormData) => {
+    const token = getToken();
+    const response = await fetch(`${API_URL}/admin/categories`, {
+      method: 'POST',
+      headers: {
+        'x-auth-token': token || '',
+      },
+      body: categoryData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({
+        message: 'Something went wrong',
+      }));
+      throw new Error(error.message || 'Something went wrong');
+    }
+
+    return response.json();
+  },
+  
+  updateCategory: async (categoryId: string, categoryData: FormData) => {
+    const token = getToken();
+    const response = await fetch(`${API_URL}/admin/categories/${categoryId}`, {
+      method: 'PUT',
+      headers: {
+        'x-auth-token': token || '',
+      },
+      body: categoryData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({
+        message: 'Something went wrong',
+      }));
+      throw new Error(error.message || 'Something went wrong');
+    }
+
+    return response.json();
+  },
+  
+  deleteCategory: async (categoryId: string) => {
+    return fetchWithAuth(`/admin/categories/${categoryId}`, {
+      method: 'DELETE',
+    });
+  },
+  
+  // Restaurant management
+  getAllRestaurants: async () => {
+    return fetchWithAuth('/restaurants');
+  },
+  
+  approveRestaurant: async (restaurantId: string) => {
+    return fetchWithAuth(`/admin/restaurants/${restaurantId}/approve`, {
+      method: 'PUT',
+    });
+  },
+  
+  suspendRestaurant: async (restaurantId: string) => {
+    return fetchWithAuth(`/admin/restaurants/${restaurantId}/suspend`, {
+      method: 'PUT',
+    });
+  },
+  
+  // Driver management
+  getAllDrivers: async () => {
+    return fetchWithAuth('/admin/drivers');
+  },
+  
+  approveDriver: async (driverId: string) => {
+    return fetchWithAuth(`/admin/drivers/${driverId}/approve`, {
+      method: 'PUT',
+    });
+  },
+  
+  suspendDriver: async (driverId: string) => {
+    return fetchWithAuth(`/admin/drivers/${driverId}/suspend`, {
+      method: 'PUT',
+    });
+  },
+  
+  // Dashboard statistics
+  getDashboardStats: async () => {
+    return fetchWithAuth('/admin/stats');
+  },
+  
+  // Customer management
+  getAllCustomers: async () => {
+    return fetchWithAuth('/admin/customers');
   },
 };
