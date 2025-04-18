@@ -44,7 +44,7 @@ router.post(
       // Upload image if provided
       let imageUrl = '';
       if (req.file) {
-        imageUrl = await uploadImage(req.file.buffer, 'categories', `${Date.now()}-${req.file.originalname}`);
+        imageUrl = await uploadImage(req.file, 'categories');
       } else {
         return res.status(400).json({ message: 'Category image is required' });
       }
@@ -59,7 +59,7 @@ router.post(
       res.status(201).json(newCategory);
     } catch (error) {
       console.error('Error creating category:', error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ message: 'Server error', error: error.message });
     }
   }
 );
@@ -91,7 +91,7 @@ router.put(
       
       // Upload and update image if provided
       if (req.file) {
-        const imageUrl = await uploadImage(req.file.buffer, 'categories', `${Date.now()}-${req.file.originalname}`);
+        const imageUrl = await uploadImage(req.file, 'categories');
         category.image = imageUrl;
       }
       
@@ -100,7 +100,7 @@ router.put(
       res.json(category);
     } catch (error) {
       console.error('Error updating category:', error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ message: 'Server error', error: error.message });
     }
   }
 );
