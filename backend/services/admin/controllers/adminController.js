@@ -1,4 +1,3 @@
-
 const User = require('../../auth/models/User');
 const Restaurant = require('../../restaurant/models/Restaurant');
 const Category = require('../../restaurant/models/Category');
@@ -54,8 +53,25 @@ exports.getAllDrivers = async (req, res) => {
       return res.status(403).json({ message: 'Forbidden - insufficient permissions' });
     }
 
-    const drivers = await Driver.find().select('-password');
-    return res.json(drivers);
+    const drivers = await Driver.find()
+      .populate('userId', 'name email phoneNumber avatar')
+      .lean();
+
+    // Combine driver and user data
+    const combinedDrivers = drivers.map(driver => ({
+      _id: driver._id,
+      name: driver.name,
+      email: driver.userId.email,
+      phone: driver.phone || driver.userId.phoneNumber,
+      avatar: driver.photo || driver.userId.avatar,
+      status: driver.status,
+      rating: driver.rating,
+      totalDeliveries: driver.totalDeliveries,
+      isActive: driver.isActive,
+      createdAt: driver.createdAt
+    }));
+
+    return res.json(combinedDrivers);
   } catch (error) {
     console.error('Error getting drivers:', error);
     return res.status(500).json({ message: 'Server error' });

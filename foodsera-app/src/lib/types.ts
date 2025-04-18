@@ -5,7 +5,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  driverStatus?: 'available' | 'busy' | 'offline';
+  status?: 'available' | 'busy' | 'offline';
   currentLocation?: {
     latitude: number;
     longitude: number;

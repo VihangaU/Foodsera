@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -10,8 +9,15 @@ import { Loader2, Check, X, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
+interface Driver extends User {
+  status: 'available' | 'busy' | 'offline';
+  rating: number;
+  totalDeliveries: number;
+  isActive: boolean;
+}
+
 const DriverDetails: React.FC = () => {
-  const [drivers, setDrivers] = useState<User[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -61,7 +67,7 @@ const DriverDetails: React.FC = () => {
       
       // Update local state
       setDrivers(drivers.map(driver => 
-        driver._id === id ? { ...driver, driverStatus: 'available' } : driver
+        driver._id === id ? { ...driver, status: 'available' } : driver
       ));
     } catch (error) {
       console.error('Error approving driver:', error);
@@ -86,7 +92,7 @@ const DriverDetails: React.FC = () => {
       
       // Update local state
       setDrivers(drivers.map(driver => 
-        driver._id === id ? { ...driver, driverStatus: 'offline' } : driver
+        driver._id === id ? { ...driver, status: 'offline' } : driver
       ));
     } catch (error) {
       console.error('Error suspending driver:', error);
@@ -137,7 +143,8 @@ const DriverDetails: React.FC = () => {
               <TableHead>Email</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Phone</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Rating</TableHead>
+              {/* <TableHead>Actions</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -155,14 +162,15 @@ const DriverDetails: React.FC = () => {
                 </TableCell>
                 <TableCell>{driver.email}</TableCell>
                 <TableCell>
-                  <Badge variant={getStatusColor(driver.driverStatus)}>
-                    {driver.driverStatus || 'offline'}
+                  <Badge variant={getStatusColor(driver.status)}>
+                    {driver.status || 'offline'}
                   </Badge>
                 </TableCell>
-                <TableCell>{driver.phone || driver.phoneNumber || 'N/A'}</TableCell>
-                <TableCell>
+                <TableCell>{driver.phone || 'N/A'}</TableCell>
+                <TableCell>{driver.rating?.toFixed(1) || '0.0'}</TableCell>
+                {/* <TableCell>
                   <div className="flex space-x-2">
-                    {driver.driverStatus !== 'offline' ? (
+                    {driver.status !== 'offline' ? (
                       <Button 
                         variant="outline" 
                         size="sm" 
@@ -192,7 +200,7 @@ const DriverDetails: React.FC = () => {
                       </Button>
                     )}
                   </div>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
