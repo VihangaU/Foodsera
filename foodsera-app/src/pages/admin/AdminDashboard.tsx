@@ -61,7 +61,7 @@ const AdminDashboard: React.FC = () => {
             Payments
           </Link>
           
-          <Link 
+          {/* <Link 
             to="#" 
             className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
               pathname.includes("/admin/customers") ? "bg-gray-800 text-white" : "text-gray-300 hover:bg-gray-800 hover:text-white"
@@ -69,7 +69,7 @@ const AdminDashboard: React.FC = () => {
           >
             <Users className="h-5 w-5 mr-3" />
             Customers
-          </Link>
+          </Link> */}
           
           <Link 
             to="#" 
