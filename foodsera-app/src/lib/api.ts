@@ -1,13 +1,20 @@
 import { Cart, CartItem, MenuItem, Order, Restaurant, User } from './types';
 
-// Base API URL
-const API_URL = 'http://localhost:5001/api';
+// Base API URLs for different services
+const API_URLS = {
+  auth: 'http://localhost:5001/api',
+  admin: 'http://localhost:5002/api',
+  delivery: 'http://localhost:5003/api',
+  order: 'http://localhost:5004/api',
+  payment: 'http://localhost:5005/api',
+  restaurant: 'http://localhost:5006/api'
+};
 
 // Get token from local storage
 const getToken = () => localStorage.getItem('token');
 
 // Helper for making authenticated requests
-const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
+const fetchWithAuth = async (service: keyof typeof API_URLS, endpoint: string, options: RequestInit = {}) => {
   const token = getToken();
   const headers = {
     'Content-Type': 'application/json',
@@ -15,7 +22,7 @@ const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
     ...options.headers,
   };
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const response = await fetch(`${API_URLS[service]}${endpoint}`, {
     ...options,
     headers,
   });
@@ -33,33 +40,33 @@ const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
 // Auth API
 export const authAPI = {
   register: async (userData: {
-    name: string;
+    username: string;
     email: string;
     password: string;
     role?: string;
     address?: string;
     phoneNumber?: string;
   }) => {
-    return fetchWithAuth('/auth/register', {
+    return fetchWithAuth('auth', '/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   },
 
   login: async (credentials: { email: string; password: string }) => {
-    return fetchWithAuth('/auth/login', {
+    return fetchWithAuth('auth', '/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   },
 
   getProfile: async () => {
-    return fetchWithAuth('/auth/profile');
+    return fetchWithAuth('auth', '/auth/profile');
   },
 
   updateProfile: async (userData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/auth/profile`, {
+    const response = await fetch(`${API_URLS.auth}/auth/profile`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token || '',
@@ -80,32 +87,32 @@ export const authAPI = {
   // Admin specific methods
   getAllUsers: async (role?: string) => {
     const queryString = role ? `?role=${role}` : '';
-    return fetchWithAuth(`/auth/users${queryString}`);
+    return fetchWithAuth('auth', `/auth/users${queryString}`);
   },
 };
 
 // Restaurant API
 export const restaurantAPI = {
   getAllRestaurants: async () => {
-    return fetchWithAuth('/restaurants');
+    return fetchWithAuth('restaurant', '/restaurants');
   },
 
   getRestaurantById: async (id: string) => {
-    return fetchWithAuth(`/restaurants/${id}`);
+    return fetchWithAuth('restaurant', `/restaurants/${id}`);
   },
 
   getMenuItems: async (restaurantId: string) => {
-    return fetchWithAuth(`/restaurants/${restaurantId}/menu`);
+    return fetchWithAuth('restaurant', `/restaurants/${restaurantId}/menu`);
   },
 
   getAllCategories: async () => {
-    return fetchWithAuth('/restaurants/categories');
+    return fetchWithAuth('restaurant', '/restaurants/categories');
   },
 
   // Restaurant owner methods
   createRestaurant: async (restaurantData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/restaurants`, {
+    const response = await fetch(`${API_URLS.restaurant}/restaurants`, {
       method: 'POST',
       headers: {
         'x-auth-token': token || '',
@@ -125,7 +132,7 @@ export const restaurantAPI = {
 
   updateRestaurant: async (id: string, restaurantData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/restaurants/${id}`, {
+    const response = await fetch(`${API_URLS.restaurant}/restaurants/${id}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token || '',
@@ -144,7 +151,6 @@ export const restaurantAPI = {
   },
 
   addMenuItem: async (restaurantId: string, menuItemData: FormData) => {
-    // Make sure we're attaching the current restaurantId to the form data
     if (!menuItemData.has('restaurantId')) {
       menuItemData.append('restaurantId', restaurantId);
     }
@@ -153,11 +159,10 @@ export const restaurantAPI = {
     console.log(`Adding menu item to restaurant: ${restaurantId}`);
     
     try {
-      const response = await fetch(`${API_URL}/restaurants/${restaurantId}/menu`, {
+      const response = await fetch(`${API_URLS.restaurant}/restaurants/${restaurantId}/menu`, {
         method: 'POST',
         headers: {
           'x-auth-token': token || '',
-          // Remove Content-Type header to let the browser set it with the boundary
         },
         body: menuItemData,
       });
@@ -178,7 +183,7 @@ export const restaurantAPI = {
 
   updateMenuItem: async (itemId: string, menuItemData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/restaurants/menu/${itemId}`, {
+    const response = await fetch(`${API_URLS.restaurant}/restaurants/menu/${itemId}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token || '',
@@ -197,7 +202,7 @@ export const restaurantAPI = {
   },
 
   deleteMenuItem: async (itemId: string) => {
-    return fetchWithAuth(`/restaurants/menu/${itemId}`, {
+    return fetchWithAuth('restaurant', `/restaurants/menu/${itemId}`, {
       method: 'DELETE',
     });
   },
@@ -217,18 +222,18 @@ export const orderAPI = {
     deliveryAddress: string;
     customerLocation?: { latitude: number; longitude: number };
   }) => {
-    return fetchWithAuth('/orders', {
+    return fetchWithAuth('order', '/orders', {
       method: 'POST',
       body: JSON.stringify(orderData),
     });
   },
 
   getUserOrders: async () => {
-    return fetchWithAuth('/orders/user');
+    return fetchWithAuth('order', '/orders/user');
   },
 
   getOrderById: async (id: string) => {
-    return fetchWithAuth(`/orders/${id}`);
+    return fetchWithAuth('order', `/orders/${id}`);
   },
 
   // Restaurant owner methods
@@ -236,25 +241,24 @@ export const orderAPI = {
     try {
       const queryString = status ? `?status=${status}` : '';
       console.log('rid',restaurantId, 'qi', queryString)
-      return await fetchWithAuth(`/orders/restaurant/${restaurantId}${queryString}`);
+      return await fetchWithAuth('order', `/orders/restaurant/${restaurantId}${queryString}`);
     } catch (error) {
-      // Handle case where restaurant doesn't exist yet
       if (error instanceof Error && error.message === 'Restaurant not found') {
-        return []; // Return empty array instead of throwing error
+        return [];
       }
       throw error;
     }
   },
 
   updateOrderStatus: async (orderId: string, status: string) => {
-    return fetchWithAuth(`/orders/${orderId}/status`, {
+    return fetchWithAuth('order', `/orders/${orderId}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
 
   assignDriver: async (orderId: string, driverId: string) => {
-    return fetchWithAuth(`/orders/${orderId}/assign-driver`, {
+    return fetchWithAuth('order', `/orders/${orderId}/assign-driver`, {
       method: 'PUT',
       body: JSON.stringify({ driverId }),
     });
@@ -263,7 +267,7 @@ export const orderAPI = {
   // Delivery driver methods
   getDriverOrders: async (status?: string) => {
     const queryString = status ? `?status=${status}` : '';
-    return fetchWithAuth(`/orders/driver/orders${queryString}`);
+    return fetchWithAuth('order', `/orders/driver/orders${queryString}`);
   },
 
   updateDriverLocation: async (data: {
@@ -271,7 +275,7 @@ export const orderAPI = {
     latitude: number;
     longitude: number;
   }) => {
-    return fetchWithAuth('/orders/driver/location', {
+    return fetchWithAuth('order', '/orders/driver/location', {
       method: 'PUT',
       body: JSON.stringify(data),
     });
@@ -281,21 +285,21 @@ export const orderAPI = {
 // Payment API
 export const paymentAPI = {
   createPaymentIntent: async (data: { amount: number; orderId: string }) => {
-    return fetchWithAuth('/payments/create-payment-intent', {
+    return fetchWithAuth('payment', '/payments/create-payment-intent', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
 
   confirmPayment: async (data: { paymentIntentId: string; orderId: string }) => {
-    return fetchWithAuth('/payments/confirm', {
+    return fetchWithAuth('payment', '/payments/confirm', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
 
   getPaymentMethods: async () => {
-    return fetchWithAuth('/payments/methods');
+    return fetchWithAuth('payment', '/payments/methods');
   },
 
   processRefund: async (data: {
@@ -303,7 +307,7 @@ export const paymentAPI = {
     amount: number;
     reason: string;
   }) => {
-    return fetchWithAuth('/payments/refund', {
+    return fetchWithAuth('payment', '/payments/refund', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -313,11 +317,11 @@ export const paymentAPI = {
 // Delivery API
 export const deliveryAPI = {
   getAvailableDrivers: async () => {
-    return fetchWithAuth('/delivery/available');
+    return fetchWithAuth('delivery', '/delivery/available');
   },
 
   getDriverProfile: async () => {
-    return fetchWithAuth('/delivery/profile');
+    return fetchWithAuth('delivery', '/delivery/profile');
   },
 
   updateDriverProfile: async (profileData: {
@@ -325,7 +329,7 @@ export const deliveryAPI = {
     phone?: string;
     photo?: string;
   }) => {
-    return fetchWithAuth('/delivery/profile', {
+    return fetchWithAuth('delivery', '/delivery/profile', {
       method: 'PUT',
       body: JSON.stringify(profileData),
     });
@@ -338,7 +342,7 @@ export const deliveryAPI = {
       longitude: number;
     };
   }) => {
-    return fetchWithAuth('/delivery/status', {
+    return fetchWithAuth('delivery', '/delivery/status', {
       method: 'PUT',
       body: JSON.stringify(statusData),
     });
@@ -349,12 +353,12 @@ export const deliveryAPI = {
 export const adminAPI = {
   // Category management
   getAllCategories: async () => {
-    return fetchWithAuth('/admin/categories');
+    return fetchWithAuth('admin', '/admin/categories');
   },
   
   createCategory: async (categoryData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/admin/categories`, {
+    const response = await fetch(`${API_URLS.admin}/admin/categories`, {
       method: 'POST',
       headers: {
         'x-auth-token': token || '',
@@ -374,7 +378,7 @@ export const adminAPI = {
   
   updateCategory: async (categoryId: string, categoryData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/admin/categories/${categoryId}`, {
+    const response = await fetch(`${API_URLS.admin}/admin/categories/${categoryId}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token || '',
@@ -393,52 +397,52 @@ export const adminAPI = {
   },
   
   deleteCategory: async (categoryId: string) => {
-    return fetchWithAuth(`/admin/categories/${categoryId}`, {
+    return fetchWithAuth('admin', `/admin/categories/${categoryId}`, {
       method: 'DELETE',
     });
   },
   
   // Restaurant management
   getAllRestaurants: async () => {
-    return fetchWithAuth('/restaurants');
+    return fetchWithAuth('admin', '/restaurants');
   },
   
   approveRestaurant: async (restaurantId: string) => {
-    return fetchWithAuth(`/admin/restaurants/${restaurantId}/approve`, {
+    return fetchWithAuth('admin', `/admin/restaurants/${restaurantId}/approve`, {
       method: 'PUT',
     });
   },
   
   suspendRestaurant: async (restaurantId: string) => {
-    return fetchWithAuth(`/admin/restaurants/${restaurantId}/suspend`, {
+    return fetchWithAuth('admin', `/admin/restaurants/${restaurantId}/suspend`, {
       method: 'PUT',
     });
   },
   
   // Driver management
   getAllDrivers: async () => {
-    return fetchWithAuth('/admin/drivers');
+    return fetchWithAuth('admin', '/admin/drivers');
   },
   
   approveDriver: async (driverId: string) => {
-    return fetchWithAuth(`/admin/drivers/${driverId}/approve`, {
+    return fetchWithAuth('admin', `/admin/drivers/${driverId}/approve`, {
       method: 'PUT',
     });
   },
   
   suspendDriver: async (driverId: string) => {
-    return fetchWithAuth(`/admin/drivers/${driverId}/suspend`, {
+    return fetchWithAuth('admin', `/admin/drivers/${driverId}/suspend`, {
       method: 'PUT',
     });
   },
   
   // Dashboard statistics
   getDashboardStats: async () => {
-    return fetchWithAuth('/admin/stats');
+    return fetchWithAuth('admin', '/admin/stats');
   },
   
   // Customer management
   getAllCustomers: async () => {
-    return fetchWithAuth('/admin/customers');
+    return fetchWithAuth('admin', '/admin/customers');
   },
 };
