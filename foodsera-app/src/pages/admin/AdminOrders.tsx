@@ -25,6 +25,7 @@ import { orderAPI, restaurantAPI, deliveryAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Restaurant } from '@/lib/types';
+import {sendSMS} from '../../lib/sendSMS';
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -479,7 +480,11 @@ const AdminOrders: React.FC = () => {
                               <div 
                                 key={driver._id} 
                                 className="flex items-center justify-between p-3 border rounded-lg hover:border-foodix-500 cursor-pointer"
-                                onClick={() => assignDriver(selectedOrder._id, driver.userId)}
+                                onClick={() => {
+                                  assignDriver(selectedOrder._id, driver.userId);
+                                  // console.log(driver.phone)
+                                  sendSMS(driver.phone, `You have been assigned to order ${selectedOrder._id}`);
+                                }}
                               >
                                 <div>
                                   <p className="font-medium">{driver.name}</p>
