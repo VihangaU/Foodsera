@@ -5,13 +5,14 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "concurrently \"npm run dev:auth\" \"npm run dev:restaurant\" \"npm run dev:order\" \"npm run dev:payment\" \"npm run dev:delivery\" \"npm run dev:admin\"",
+    "dev": "concurrently \"npm run dev:auth\" \"npm run dev:restaurant\" \"npm run dev:order\" \"npm run dev:payment\" \"npm run dev:delivery\" \"npm run dev:admin\" \"npm run dev:notification\"",
     "dev:auth": "nodemon services/auth/server.js",
     "dev:restaurant": "nodemon services/restaurant/server.js",
     "dev:order": "nodemon services/order/server.js",
     "dev:payment": "nodemon services/payment/server.js",
     "dev:delivery": "nodemon services/delivery/server.js",
     "dev:admin": "nodemon services/admin/server.js",
+    "dev:notification": "nodemon services/notification/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -23,7 +24,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.3",
     "multer": "^1.4.5-lts.1",
-    "stripe": "^13.10.0"
+    "stripe": "^13.10.0",
+    "twilio": "^5.5.2"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
