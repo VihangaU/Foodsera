@@ -5,7 +5,7 @@ const { uploadImage } = require('../utils/uploadImage');
 require('dotenv').config();
 
 // Configure delivery service URL from environment variable
-const DELIVERY_SERVICE_URL = 'http://localhost:5003';
+const DELIVERY_SERVICE_URL = 'http://host.docker.internal:4000/delivery-proxy';
 
 // Register user
 exports.register = async (req, res) => {
@@ -93,7 +93,7 @@ exports.login = async (req, res) => {
     if (user.role === 'delivery') {
       try {
         const driverResponse = await axios.get(`${DELIVERY_SERVICE_URL}/api/delivery/profile/${user._id}`);
-        
+
         // If no driver record exists, create one
         if (!driverResponse.data) {
           await axios.post(`${DELIVERY_SERVICE_URL}/api/delivery/create`, {
@@ -183,14 +183,14 @@ exports.getAllUsersByRole = async (req, res) => {
     if (req.user.role !== 'main_admin' && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Forbidden - insufficient permissions' });
     }
-    
+
     const role = req.query.role;
-    
+
     let query = {};
     if (role) {
       query.role = role;
     }
-    
+
     const users = await User.find(query).select('-password');
     res.json(users);
   } catch (error) {
@@ -205,7 +205,7 @@ exports.getUserById = async (req, res) => {
 
     const userId = req.params.id;
     const user = await User.findById(userId).select('-password');
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

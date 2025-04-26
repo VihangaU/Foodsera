@@ -8,11 +8,11 @@ const DELIVERY_SERVICE_URL = 'http://localhost:5001';
 exports.getAvailableDrivers = async (req, res) => {
   try {
     // Find all drivers with status 'available'
-    const drivers = await Driver.find({ 
+    const drivers = await Driver.find({
       status: 'available',
-      isActive: true 
+      isActive: true
     }).populate('userId', 'name email');
-    
+
     res.json(drivers);
   } catch (error) {
     console.error('Error fetching available drivers:', error);
@@ -39,7 +39,7 @@ exports.updateDriverStatus = async (req, res) => {
     }
 
     await driver.save();
-    
+
     // Also update the user's driverStatus for consistency
     const user = await axios.get(`${DELIVERY_SERVICE_URL}/api/auth/users/${driverId}`);
 
@@ -50,7 +50,7 @@ exports.updateDriverStatus = async (req, res) => {
       }
       await user.save();
     }
-    
+
     res.json(driver);
   } catch (error) {
     console.error('Error updating driver status:', error);
@@ -62,20 +62,20 @@ exports.updateDriverStatus = async (req, res) => {
 exports.getDriverProfile = async (req, res) => {
   try {
     const driverId = req.params.id;
-    
+
     // Find the driver record
     const driver = await Driver.findOne({ userId: driverId });
     if (!driver) {
       return res.status(404).json({ message: 'Driver not found' });
     }
-    
+
     // Get user data
     const user = await axios.get(`${DELIVERY_SERVICE_URL}/api/auth/users/${driverId}`);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     // Combine driver and user data
     const driverProfile = {
       ...driver.toObject(),
@@ -84,7 +84,7 @@ exports.getDriverProfile = async (req, res) => {
       phoneNumber: user.phoneNumber,
       avatar: user.avatar
     };
-    
+
     res.json(driverProfile);
   } catch (error) {
     console.error('Error fetching driver profile:', error);
@@ -110,7 +110,7 @@ exports.updateDriverProfile = async (req, res) => {
     if (photo) driver.photo = photo;
 
     await driver.save();
-    
+
     // Also update the user data for consistency
     const user = await axios.get(`${DELIVERY_SERVICE_URL}/api/auth/users/${driverId}`);
     if (user) {
@@ -119,7 +119,7 @@ exports.updateDriverProfile = async (req, res) => {
       if (photo) user.avatar = photo;
       await user.save();
     }
-    
+
     res.json(driver);
   } catch (error) {
     console.error('Error updating driver profile:', error);
