@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const authController = require('../controllers/authController');
-const { authMiddleware } = require('../../../middleware/auth');
+const { authMiddleware } = require('../middleware/auth');
 
 // Setup multer for file uploads (store in memory for Firebase upload)
 const storage = multer.memoryStorage();
