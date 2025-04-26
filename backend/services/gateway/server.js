@@ -33,6 +33,7 @@ app.use(sessSettings);
 app.use("/auth-proxy", proxy("http://localhost:5001"));
 app.use("/delivery-proxy", proxy("http://localhost:5003"));
 app.use("/restaurent-proxy", proxy("http://localhost:5006"));
+app.use("/notification-proxy", proxy("http://localhost:5007"));
 
 // Health check route
 app.get("/", (req, res) => {
