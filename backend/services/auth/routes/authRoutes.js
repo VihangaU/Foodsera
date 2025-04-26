@@ -28,5 +28,6 @@ router.put(
 
 // Get all users by role (for admin)
 router.get('/users', authMiddleware, authController.getAllUsersByRole);
+router.get('/users/:id', authController.getUserById);
 
 module.exports = router;

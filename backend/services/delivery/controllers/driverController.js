@@ -1,5 +1,8 @@
 const User = require('../../auth/models/User');
 const Driver = require('../models/Driver');
+const axios = require('axios');
+
+const DELIVERY_SERVICE_URL = 'http://localhost:5001';
 
 // Get all available drivers
 exports.getAvailableDrivers = async (req, res) => {
@@ -38,7 +41,8 @@ exports.updateDriverStatus = async (req, res) => {
     await driver.save();
     
     // Also update the user's driverStatus for consistency
-    const user = await User.findById(driverId);
+    const user = await axios.get(`${DELIVERY_SERVICE_URL}/api/auth/users/${driverId}`);
+
     if (user) {
       user.driverStatus = status;
       if (currentLocation) {
@@ -66,7 +70,8 @@ exports.getDriverProfile = async (req, res) => {
     }
     
     // Get user data
-    const user = await User.findById(driverId).select('-password');
+    const user = await axios.get(`${DELIVERY_SERVICE_URL}/api/auth/users/${driverId}`);
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -107,7 +112,7 @@ exports.updateDriverProfile = async (req, res) => {
     await driver.save();
     
     // Also update the user data for consistency
-    const user = await User.findById(driverId);
+    const user = await axios.get(`${DELIVERY_SERVICE_URL}/api/auth/users/${driverId}`);
     if (user) {
       if (name) user.name = name;
       if (phone) user.phoneNumber = phone;
