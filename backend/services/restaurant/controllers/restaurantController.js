@@ -1,7 +1,7 @@
 const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const Category = require('../models/Category');
-const { uploadImage } = require('../../../utils/uploadImage');
+const { uploadImage } = require('../utils/uploadImage');
 
 // Get all restaurants
 exports.getAllRestaurants = async (req, res) => {
