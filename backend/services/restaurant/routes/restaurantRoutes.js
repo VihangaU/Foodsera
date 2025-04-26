@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const restaurantController = require('../controllers/restaurantController');
-const { authMiddleware, authorize } = require('../../../middleware/auth');
+const { authMiddleware, authorize } = require('../middleware/auth');
 const Category = require('../models/Category');
-const { uploadImage } = require('../../../utils/uploadImage');
+const { uploadImage } = require('../utils/uploadImage');
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();

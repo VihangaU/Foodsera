@@ -32,6 +32,7 @@ app.use(sessSettings);
 // Proxy middleware to microservices
 app.use("/auth-proxy", proxy("http://localhost:5001"));
 app.use("/delivery-proxy", proxy("http://localhost:5003"));
+app.use("/restaurent-proxy", proxy("http://localhost:5006"));
 
 // Health check route
 app.get("/", (req, res) => {
