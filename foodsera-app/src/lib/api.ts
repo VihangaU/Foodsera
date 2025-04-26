@@ -40,7 +40,7 @@ const fetchWithAuth = async (service: keyof typeof API_URLS, endpoint: string, o
 // Auth API
 export const authAPI = {
   register: async (userData: {
-    username: string;
+    name: string;
     email: string;
     password: string;
     role?: string;
