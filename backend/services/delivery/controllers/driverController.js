@@ -57,7 +57,7 @@ exports.updateDriverStatus = async (req, res) => {
 // Get driver profile
 exports.getDriverProfile = async (req, res) => {
   try {
-    const driverId = req.user.id;
+    const driverId = req.params.id;
     
     // Find the driver record
     const driver = await Driver.findOne({ userId: driverId });
@@ -120,4 +120,32 @@ exports.updateDriverProfile = async (req, res) => {
     console.error('Error updating driver profile:', error);
     res.status(500).json({ message: 'Server error' });
   }
-}; 
+};
+
+// Create a new driver
+exports.createDriver = async (req, res) => {
+  try {
+    const { userId, name, status } = req.body;
+
+    // Check if driver already exists
+    const existingDriver = await Driver.findOne({ userId });
+    if (existingDriver) {
+      return res.status(409).json({ message: 'Driver already exists' });
+    }
+
+    // Create a new driver
+    const newDriver = new Driver({
+      userId,
+      name,
+      phone,
+      status
+    });
+
+    await newDriver.save();
+
+    res.status(201).json(newDriver);
+  } catch (error) {
+    console.error('Error creating driver:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

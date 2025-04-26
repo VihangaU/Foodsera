@@ -1,7 +1,11 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Driver = require('../../delivery/models/Driver');
-const { uploadImage } = require('../../../utils/uploadImage');
+const axios = require('axios');
+const { uploadImage } = require('../utils/uploadImage');
+require('dotenv').config();
+
+// Configure delivery service URL from environment variable
+const DELIVERY_SERVICE_URL = 'http://localhost:5003';
 
 // Register user
 exports.register = async (req, res) => {
@@ -27,15 +31,21 @@ exports.register = async (req, res) => {
     // Save user to database
     await user.save();
 
-    // If user is a delivery driver, create a driver record
+    // If user is a delivery driver, create a driver record through API
     if (role === 'delivery') {
-      const driver = new Driver({
-        userId: user._id,
-        name: user.name,
-        phone: user.phoneNumber || '',
-        status: 'offline'
-      });
-      await driver.save();
+      try {
+        await axios.post(`${DELIVERY_SERVICE_URL}/api/delivery/create`, {
+          userId: user._id,
+          name: user.name,
+          phone: user.phoneNumber || '',
+          status: 'offline'
+        });
+      } catch (driverError) {
+        console.error('Error creating driver record:', driverError.message);
+        // Delete the created user if driver creation fails
+        await User.findByIdAndDelete(user._id);
+        return res.status(500).json({ message: 'Error creating driver record' });
+      }
     }
 
     // Create JWT payload
@@ -81,17 +91,21 @@ exports.login = async (req, res) => {
 
     // If user is a delivery driver, ensure a driver record exists
     if (user.role === 'delivery') {
-      let driver = await Driver.findOne({ userId: user._id });
-      
-      // If no driver record exists, create one
-      if (!driver) {
-        driver = new Driver({
-          userId: user._id,
-          name: user.name,
-          phone: user.phoneNumber || '',
-          status: 'offline'
-        });
-        await driver.save();
+      try {
+        const driverResponse = await axios.get(`${DELIVERY_SERVICE_URL}/api/delivery/profile/${user._id}`);
+        
+        // If no driver record exists, create one
+        if (!driverResponse.data) {
+          await axios.post(`${DELIVERY_SERVICE_URL}/api/delivery/create`, {
+            userId: user._id,
+            name: user.name,
+            phone: user.phoneNumber || '',
+            status: 'offline'
+          });
+        }
+      } catch (driverError) {
+        console.error('Error verifying driver record:', driverError.message);
+        return res.status(500).json({ message: 'Error verifying driver status' });
       }
     }
 

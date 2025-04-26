@@ -1,19 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const { auth } = require('../../../services/auth/middleware/auth');
 const { 
   getAvailableDrivers, 
   updateDriverStatus, 
   getDriverProfile, 
-  updateDriverProfile 
+  updateDriverProfile ,
+  createDriver
 } = require('../controllers/driverController');
 
 // Public routes
 router.get('/available', getAvailableDrivers);
 
-// Protected routes (require authentication)
-router.get('/profile', auth, getDriverProfile);
-router.put('/profile', auth, updateDriverProfile);
-router.put('/status', auth, updateDriverStatus);
-
+router.get('/profile/:id', getDriverProfile);
+router.put('/profile', updateDriverProfile);
+router.put('/status', updateDriverStatus);
+router.post('/create', createDriver);
 module.exports = router; 
