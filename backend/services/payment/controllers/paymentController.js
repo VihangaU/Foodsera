@@ -49,10 +49,10 @@ exports.confirmPayment = async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Update the order status through the order service
-    await axios.put(`${Order_SERVICE_URL}/api/orders/${orderId}/status`, {
-      paymentStatus: 'completed'
-    });
+    // // Update the order status through the order service
+    // await axios.put(`${Order_SERVICE_URL}/api/orders/${orderId}/status`, {
+    //   paymentStatus: 'completed'
+    // });
 
     res.json({ message: 'Payment confirmed', order: orderResponse.data });
   } catch (error) {
