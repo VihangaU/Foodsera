@@ -137,10 +137,6 @@ exports.updateRestaurant = async (req, res) => {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
 
-    // Verify ownership
-    if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
 
     restaurant = await Restaurant.findByIdAndUpdate(
       req.params.id,
@@ -161,11 +157,6 @@ exports.deleteRestaurant = async (req, res) => {
     const restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
-    }
-
-    // Verify ownership
-    if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized' });
     }
 
     // Delete all menu items associated with this restaurant
@@ -220,11 +211,6 @@ exports.addMenuItem = async (req, res) => {
     const restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
-    }
-
-    // Verify ownership
-    if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized' });
     }
 
     // Upload image
@@ -302,11 +288,6 @@ exports.updateMenuItem = async (req, res) => {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
 
-    // Verify ownership
-    if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-
     menuItem = await MenuItem.findByIdAndUpdate(
       req.params.itemId,
       { $set: menuItemFields },
@@ -333,11 +314,6 @@ exports.deleteMenuItem = async (req, res) => {
     const restaurant = await Restaurant.findById(menuItem.restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
-    }
-
-    // Verify ownership
-    if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized' });
     }
 
     await MenuItem.findByIdAndDelete(req.params.itemId);
