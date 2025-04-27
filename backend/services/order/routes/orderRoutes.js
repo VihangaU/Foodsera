@@ -5,7 +5,7 @@ const orderController = require('../controllers/orderController');
 const { authMiddleware, authorize } = require('../middleware/auth');
 
 // Protected routes
-router.use(authMiddleware);
+// router.use(authMiddleware);
 
 // Customer routes
 router.post('/', orderController.createOrder);
@@ -15,7 +15,6 @@ router.get('/:id', orderController.getOrderById);
 // Restaurant routes
 router.get(
   '/restaurant/:restaurantId',
-  authorize(['restaurant', 'admin']),
   orderController.getRestaurantOrders
 );
 
