@@ -48,15 +48,15 @@ const DeliveryHome: React.FC = () => {
   const updateOrderStatus = async (orderId: string, status: Order['status']) => {
     try {
       await orderAPI.updateOrderStatus(orderId, status);
-      
+
       // Update local state
       setActiveOrders(prev => prev.filter(order => order._id !== orderId));
-      
+
       // If order is delivered, update driver status to available
       if (status === 'delivered') {
-        await deliveryAPI.updateDriverStatus({ status: 'available' });
+        await deliveryAPI.updateDriverStatus({ status: 'available', driverId: user?._id || '' });
       }
-      
+
       toast({
         title: status === 'delivered' ? "Order marked as delivered" : "Order canceled",
         description: `Order #${orderId} has been updated`,
@@ -93,7 +93,7 @@ const DeliveryHome: React.FC = () => {
       <div className="text-center py-10">
         <h1 className="text-2xl font-bold mb-4">Delivery Dashboard</h1>
         <div className="text-red-600 mb-4">{error}</div>
-        <Button 
+        <Button
           onClick={() => window.location.reload()}
           variant="outline"
         >
@@ -106,7 +106,7 @@ const DeliveryHome: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Delivery Dashboard</h1>
-      
+
       {activeOrders.length === 0 ? (
         <div className="text-center py-10 bg-gray-50 rounded-lg">
           <TruckIcon className="h-12 w-12 mx-auto text-gray-400 mb-3" />
@@ -136,7 +136,7 @@ const DeliveryHome: React.FC = () => {
                   <h3 className="text-sm font-medium text-gray-500">Delivery Address</h3>
                   <p className="font-medium">{order.deliveryAddress}</p>
                 </div>
-                
+
                 <div className="mb-4">
                   <h3 className="text-sm font-medium text-gray-500">Items</h3>
                   <ul className="text-sm space-y-1 mt-1">
@@ -148,30 +148,30 @@ const DeliveryHome: React.FC = () => {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div className="flex justify-between text-sm font-medium mb-4">
                   <span>Total:</span>
                   <span>${order.total.toFixed(2)}</span>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-2">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full"
                     onClick={() => handleViewOrder(order)}
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     View
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full"
                     onClick={() => updateOrderStatus(order._id, 'cancelled')}
                   >
                     <AlertTriangle className="h-4 w-4 mr-2" />
                     Cancel
                   </Button>
-                  <Button 
+                  <Button
                     className="w-full"
                     onClick={() => updateOrderStatus(order._id, 'delivered')}
                   >
@@ -201,7 +201,7 @@ const DeliveryHome: React.FC = () => {
                   Placed on {new Date(selectedOrder.createdAt).toLocaleString()}
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
                 <div>
                   <h3 className="font-medium mb-2 flex items-center">
@@ -210,22 +210,22 @@ const DeliveryHome: React.FC = () => {
                   </h3>
                   <p className="text-sm text-gray-600">{selectedOrder.deliveryAddress}</p>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium mb-2 flex items-center">
                     <CreditCard className="h-4 w-4 mr-2 text-gray-500" />
                     Payment Method
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {selectedOrder.paymentMethod === 'card' ? 'Credit Card' : 
-                     selectedOrder.paymentMethod === 'cash' ? 'Cash' : 
-                     selectedOrder.paymentMethod === 'paypal' ? 'PayPal' : 'Unknown'}
+                    {selectedOrder.paymentMethod === 'card' ? 'Credit Card' :
+                      selectedOrder.paymentMethod === 'cash' ? 'Cash' :
+                        selectedOrder.paymentMethod === 'paypal' ? 'PayPal' : 'Unknown'}
                   </p>
                 </div>
               </div>
-              
+
               <Separator className="my-4" />
-              
+
               <div className="mb-6">
                 <h3 className="font-medium mb-2">Order Items</h3>
                 <div className="bg-gray-50 rounded-lg p-4">
@@ -247,7 +247,7 @@ const DeliveryHome: React.FC = () => {
                   ))}
                 </div>
               </div>
-              
+
               <div className="bg-gray-50 rounded-lg p-4 mb-6">
                 <div className="flex justify-between text-sm mb-2">
                   <span>Subtotal:</span>
@@ -273,16 +273,16 @@ const DeliveryHome: React.FC = () => {
                   <span>${selectedOrder.total.toFixed(2)}</span>
                 </div>
               </div>
-              
+
               <DialogFooter>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setSelectedOrder(null)}
                 >
                   Close
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => {
                     if (selectedOrder) {
                       updateOrderStatus(selectedOrder._id, 'cancelled');
@@ -293,7 +293,7 @@ const DeliveryHome: React.FC = () => {
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   Cancel Order
                 </Button>
-                <Button 
+                <Button
                   onClick={() => {
                     if (selectedOrder) {
                       updateOrderStatus(selectedOrder._id, 'delivered');

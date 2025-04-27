@@ -206,9 +206,15 @@ exports.assignDriver = async (req, res) => {
     order.status = 'in-delivery';
     await order.save();
 
-    // Update driver status
-    driver.status = 'busy';
-    await driver.save();
+    // Update user status
+    const status = await axios.put(`${DELIVERY_SERVICE_URL}/api/delivery/status`, {
+      status: 'busy',
+      driverId: driverId
+    });
+
+    if (!status) {
+      return res.status(400).json({ message: 'Failed to update driver status' });
+    }
 
     res.json(order);
   } catch (error) {
@@ -221,7 +227,6 @@ exports.assignDriver = async (req, res) => {
 exports.getDriverOrders = async (req, res) => {
   try {
     const { status, userId } = req.query;
-    console.log('Fetching driver orders with params:', { status, userId });
 
     const query = { assignedDriverId: userId };
 

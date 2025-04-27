@@ -22,8 +22,7 @@ exports.getAvailableDrivers = async (req, res) => {
 // Update driver status
 exports.updateDriverStatus = async (req, res) => {
   try {
-    const { status, currentLocation } = req.body;
-    const driverId = req.user.id;
+    const { status, driverId } = req.body;
 
     // Find the driver record
     const driver = await Driver.findOne({ userId: driverId });
@@ -33,22 +32,8 @@ exports.updateDriverStatus = async (req, res) => {
 
     // Update driver status
     driver.status = status;
-    if (currentLocation) {
-      driver.currentLocation = currentLocation;
-    }
 
     await driver.save();
-
-    // Also update the user's driverStatus for consistency
-    const user = await axios.get(`${DELIVERY_SERVICE_URL}/api/auth/users/${driverId}`);
-
-    if (user) {
-      user.driverStatus = status;
-      if (currentLocation) {
-        user.currentLocation = currentLocation;
-      }
-      await user.save();
-    }
 
     res.json(driver);
   } catch (error) {

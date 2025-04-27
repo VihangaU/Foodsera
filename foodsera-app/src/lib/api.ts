@@ -337,10 +337,7 @@ export const deliveryAPI = {
 
   updateDriverStatus: async (statusData: {
     status: 'available' | 'busy' | 'offline';
-    currentLocation?: {
-      latitude: number;
-      longitude: number;
-    };
+    driverId: string;
   }) => {
     return fetchWithAuth('delivery', '/delivery/status', {
       method: 'PUT',
