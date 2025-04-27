@@ -179,19 +179,10 @@ exports.updateUserProfile = async (req, res) => {
 // Get all users by role
 exports.getAllUsersByRole = async (req, res) => {
   try {
-    // Verify user has admin permissions
-    if (req.user.role !== 'main_admin' && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Forbidden - insufficient permissions' });
-    }
 
-    const role = req.query.role;
+    const role = req.params.role;
 
-    let query = {};
-    if (role) {
-      query.role = role;
-    }
-
-    const users = await User.find(query).select('-password');
+    const users = await User.find({ role: role }).select('-password');
     res.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
