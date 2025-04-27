@@ -13,6 +13,7 @@ import { orderAPI, restaurantAPI } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import StripePaymentForm from '@/components/payment/StripePaymentForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CheckoutPageProps {
   cart: Cart;
@@ -22,6 +23,7 @@ interface CheckoutPageProps {
 const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, clearCart }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
@@ -127,6 +129,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, clearCart }) => {
         const restaurantTotal = restaurantSubtotal + restaurantDeliveryFee + restaurantTax;
         
         const orderData = {
+          userId: user?._id,
           restaurantId,
           items,
           subtotal: restaurantSubtotal,
