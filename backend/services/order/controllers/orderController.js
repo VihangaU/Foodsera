@@ -1,8 +1,8 @@
 const Order = require('../models/Order');
 const axios = require('axios');
 
-const DELIVERY_SERVICE_URL = 'http://localhost:5003';
-const Restaurant_SERVICE_URL = 'http://localhost:5006';
+const DELIVERY_SERVICE_URL = 'http://delivery-service:5003';
+const Restaurant_SERVICE_URL = 'http://restaurent-service:5006';
 
 // Create a new order
 exports.createOrder = async (req, res) => {
