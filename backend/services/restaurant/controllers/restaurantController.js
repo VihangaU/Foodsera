@@ -190,6 +190,22 @@ exports.getMenuItems = async (req, res) => {
   }
 };
 
+// Get menu item by ID
+exports.getMenuItemById = async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findById(req.params.id);
+    
+    if (!menuItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
+    }
+
+    res.json(menuItem);
+  } catch (error) {
+    console.error('Error getting menu item:', error.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Add menu item
 exports.addMenuItem = async (req, res) => {
   try {

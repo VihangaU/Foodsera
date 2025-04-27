@@ -127,6 +127,7 @@ router.delete(
 
 // Get restaurant by ID (public)
 router.get('/:id', restaurantController.getRestaurantById);
+router.get('/menu/:id', restaurantController.getMenuItemById);
 
 // Create a new restaurant (protected, only restaurant owners)
 router.post(

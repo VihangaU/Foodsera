@@ -1,8 +1,8 @@
 const Order = require('../models/Order');
-const Restaurant = require('../../restaurant/models/Restaurant');
-const MenuItem = require('../../restaurant/models/MenuItem');
-const User = require('../../auth/models/User');
-const Driver = require('../../delivery/models/Driver');
+const axios = require('axios');
+
+const DELIVERY_SERVICE_URL = 'http://localhost:5003';
+const Restaurant_SERVICE_URL = 'http://localhost:5006';
 
 // Create a new order
 exports.createOrder = async (req, res) => {
@@ -21,7 +21,7 @@ exports.createOrder = async (req, res) => {
     } = req.body;
 
     // Verify restaurant exists
-    const restaurant = await Restaurant.findById(restaurantId);
+    const restaurant = await axios.get(`${Restaurant_SERVICE_URL}/api/restaurants/${restaurantId}`);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
@@ -29,7 +29,8 @@ exports.createOrder = async (req, res) => {
     // Verify menu items and their prices
     const itemsWithDetails = [];
     for (const item of items) {
-      const menuItem = await MenuItem.findById(item.menuItemId);
+      const menuItem = await axios.get(`${Restaurant_SERVICE_URL}/api/restaurants/menu/${item.menuItemId}`);
+      // const menuItem = await MenuItem.findById(item.menuItemId);
       if (!menuItem) {
         return res.status(404).json({ message: `Menu item ${item.menuItemId} not found` });
       }
@@ -121,7 +122,8 @@ exports.getOrderById = async (req, res) => {
 exports.getRestaurantOrders = async (req, res) => {
   try {
     // Verify restaurant ownership
-    const restaurant = await Restaurant.findById(req.params.restaurantId);
+    const restaurant = await axios.get(`${Restaurant_SERVICE_URL}/api/restaurants/${req.params.restaurantId}`);
+    // const restaurant = await Restaurant.findById(req.params.restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
@@ -173,7 +175,8 @@ exports.updateOrderStatus = async (req, res) => {
     
     // Check authorization
     if (req.user.role === 'restaurant') {
-      const restaurant = await Restaurant.findById(order.restaurantId);
+      const restaurant = await axios.get(`${Restaurant_SERVICE_URL}/api/restaurants/${order.restaurantId}`);
+      // const restaurant = await Restaurant.findById(order.restaurantId);
       if (!restaurant || restaurant.owner.toString() !== req.user.id) {
         return res.status(403).json({ message: 'Not authorized' });
       }
@@ -205,7 +208,7 @@ exports.assignDriver = async (req, res) => {
     const { driverId } = req.body;
     
     // Verify driver exists
-    const driver = await Driver.findOne({ userId: driverId });
+    const driver = await axios.get(`${DELIVERY_SERVICE_URL}/api/delivery/profile/${driverId}`);
     if (!driver) {
       return res.status(400).json({ message: 'Invalid driver' });
     }
