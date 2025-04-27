@@ -6,6 +6,7 @@ import { Order } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
 import { orderAPI } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -34,9 +35,12 @@ const getStatusBadgeClass = (status: string) => {
 };
 
 const MyOrdersPage: React.FC = () => {
+  const { user } = useAuth();
+  
   const { data: orders, isLoading, isError } = useQuery({
-    queryKey: ['orders'],
-    queryFn: orderAPI.getUserOrders
+    queryKey: ['orders', user?._id],
+    queryFn: () => orderAPI.getUserOrders(user?._id),
+    enabled: !!user?._id
   });
   
   if (isLoading) {

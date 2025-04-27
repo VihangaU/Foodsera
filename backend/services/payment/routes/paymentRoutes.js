@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
-const { authMiddleware, authorize } = require('../../../middleware/auth');
+const { authMiddleware, authorize } = require('../middleware/auth');
 
 // Protected routes
 router.use(authMiddleware);
