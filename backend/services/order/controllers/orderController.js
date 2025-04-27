@@ -220,8 +220,10 @@ exports.assignDriver = async (req, res) => {
 // Get orders for a delivery driver
 exports.getDriverOrders = async (req, res) => {
   try {
-    const { status } = req.query;
-    const query = { assignedDriverId: req.user.id };
+    const { status, userId } = req.query;
+    console.log('Fetching driver orders with params:', { status, userId });
+
+    const query = { assignedDriverId: userId };
 
     if (status) {
       query.status = status;
@@ -229,8 +231,6 @@ exports.getDriverOrders = async (req, res) => {
 
     const orders = await Order.find(query)
       .sort({ createdAt: -1 })
-      .populate('restaurantId', 'name address logo')
-      .populate('userId', 'name phoneNumber');
 
     res.json(orders);
   } catch (error) {

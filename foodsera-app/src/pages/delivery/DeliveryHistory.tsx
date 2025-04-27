@@ -32,7 +32,7 @@ const DeliveryHistory: React.FC = () => {
         setError(null);
 
         // Fetch completed delivery orders (delivered status)
-        const orders = await orderAPI.getDriverOrders('delivered');
+        const orders = await orderAPI.getDriverOrders('delivered', user?._id || '');
         setCompletedOrders(orders);
       } catch (err) {
         console.error('Failed to fetch completed orders:', err);
@@ -67,7 +67,7 @@ const DeliveryHistory: React.FC = () => {
       <div className="text-center py-10">
         <h1 className="text-2xl font-bold mb-4">Completed Deliveries</h1>
         <div className="text-red-600 mb-4">{error}</div>
-        <Button 
+        <Button
           onClick={() => window.location.reload()}
           variant="outline"
         >
@@ -80,7 +80,7 @@ const DeliveryHistory: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Completed Deliveries</h1>
-      
+
       {completedOrders.length === 0 ? (
         <div className="text-center py-10 bg-gray-50 rounded-lg">
           <CheckCircle className="h-12 w-12 mx-auto text-gray-400 mb-3" />
@@ -110,7 +110,7 @@ const DeliveryHistory: React.FC = () => {
                   <h3 className="text-sm font-medium text-gray-500">Delivery Address</h3>
                   <p className="font-medium">{order.deliveryAddress}</p>
                 </div>
-                
+
                 <div className="mb-4">
                   <h3 className="text-sm font-medium text-gray-500">Items</h3>
                   <ul className="text-sm space-y-1 mt-1">
@@ -122,14 +122,14 @@ const DeliveryHistory: React.FC = () => {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div className="flex justify-between text-sm font-medium mb-4">
                   <span>Total:</span>
                   <span>${order.total.toFixed(2)}</span>
                 </div>
-                
-                <Button 
-                  variant="outline" 
+
+                <Button
+                  variant="outline"
                   className="w-full"
                   onClick={() => handleViewOrder(order)}
                 >
@@ -158,7 +158,7 @@ const DeliveryHistory: React.FC = () => {
                   Placed on {format(new Date(selectedOrder.createdAt), 'MMMM d, yyyy h:mm a')}
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
                 <div>
                   <h3 className="font-medium mb-2 flex items-center">
@@ -167,22 +167,22 @@ const DeliveryHistory: React.FC = () => {
                   </h3>
                   <p className="text-sm text-gray-600">{selectedOrder.deliveryAddress}</p>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium mb-2 flex items-center">
                     <CreditCard className="h-4 w-4 mr-2 text-gray-500" />
                     Payment Method
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {selectedOrder.paymentMethod === 'card' ? 'Credit Card' : 
-                     selectedOrder.paymentMethod === 'cash' ? 'Cash' : 
-                     selectedOrder.paymentMethod === 'paypal' ? 'PayPal' : 'Unknown'}
+                    {selectedOrder.paymentMethod === 'card' ? 'Credit Card' :
+                      selectedOrder.paymentMethod === 'cash' ? 'Cash' :
+                        selectedOrder.paymentMethod === 'paypal' ? 'PayPal' : 'Unknown'}
                   </p>
                 </div>
               </div>
-              
+
               <Separator className="my-4" />
-              
+
               <div className="mb-6">
                 <h3 className="font-medium mb-2">Order Items</h3>
                 <div className="bg-gray-50 rounded-lg p-4">
@@ -204,7 +204,7 @@ const DeliveryHistory: React.FC = () => {
                   ))}
                 </div>
               </div>
-              
+
               <div className="bg-gray-50 rounded-lg p-4 mb-6">
                 <div className="flex justify-between text-sm mb-2">
                   <span>Subtotal:</span>
@@ -230,10 +230,10 @@ const DeliveryHistory: React.FC = () => {
                   <span>${selectedOrder.total.toFixed(2)}</span>
                 </div>
               </div>
-              
+
               <DialogFooter>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setSelectedOrder(null)}
                 >
                   Close

@@ -32,7 +32,7 @@ const DeliveryHome: React.FC = () => {
         setError(null);
 
         // Fetch active delivery orders (in-delivery status)
-        const orders = await orderAPI.getDriverOrders('in-delivery');
+        const orders = await orderAPI.getDriverOrders('in-delivery', user?._id || '');
         setActiveOrders(orders);
       } catch (err) {
         console.error('Failed to fetch active orders:', err);

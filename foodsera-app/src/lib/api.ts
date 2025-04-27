@@ -266,9 +266,8 @@ export const orderAPI = {
   },
 
   // Delivery driver methods
-  getDriverOrders: async (status?: string) => {
-    const queryString = status ? `?status=${status}` : '';
-    return fetchWithAuth('order', `/orders/driver/orders${queryString}`);
+  getDriverOrders: async (status: string, userId: string) => {
+    return fetchWithAuth('order', `/orders/driver/orders?status=${status}&userId=${userId}`);
   },
 
   updateDriverLocation: async (data: {
