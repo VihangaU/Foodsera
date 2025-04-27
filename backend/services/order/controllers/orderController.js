@@ -77,11 +77,8 @@ exports.createOrder = async (req, res) => {
 
 // Get all orders for a user
 exports.getUserOrders = async (req, res) => {
-  console.log(req)
   try {
-    const orders = await Order.find({ userId: req.user.id })
-      .sort({ createdAt: -1 })
-      .populate('restaurantId', 'name logo');
+    const orders = await Order.find({ userId: req.params.id })
 
     res.json(orders);
   } catch (error) {

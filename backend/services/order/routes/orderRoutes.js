@@ -9,7 +9,7 @@ const { authMiddleware, authorize } = require('../middleware/auth');
 
 // Customer routes
 router.post('/', orderController.createOrder);
-router.get('/user', orderController.getUserOrders);
+router.get('/user/:id', orderController.getUserOrders);
 router.get('/:id', orderController.getOrderById);
 
 // Restaurant routes

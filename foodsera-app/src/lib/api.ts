@@ -228,8 +228,8 @@ export const orderAPI = {
     });
   },
 
-  getUserOrders: async () => {
-    return fetchWithAuth('order', '/orders/user');
+  getUserOrders: async (userId: string) => {
+    return fetchWithAuth('order', `/orders/${userId}`);
   },
 
   getOrderById: async (id: string) => {
