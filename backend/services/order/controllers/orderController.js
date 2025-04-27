@@ -91,23 +91,11 @@ exports.getUserOrders = async (req, res) => {
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
-      .populate('restaurantId', 'name logo address')
-      .populate('assignedDriverId', 'name phoneNumber');
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Check if user has permission to view this order
-    const isAuthorized =
-      order.userId.toString() === req.user.id || // Customer
-      req.user.role === 'restaurant' && order.restaurantId._id.toString() === req.params.restaurantId || // Restaurant owner
-      req.user.role === 'delivery' && order.assignedDriverId?._id.toString() === req.user.id || // Assigned driver
-      req.user.role === 'admin'; // Admin
-
-    if (!isAuthorized) {
-      return res.status(403).json({ message: 'Not authorized to view this order' });
-    }
 
     res.json(order);
   } catch (error) {

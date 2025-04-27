@@ -83,7 +83,7 @@ export const authAPI = {
 
     return response.json();
   },
-  
+
   // Admin specific methods
   getAllUsers: async (role?: string) => {
     const queryString = role ? `?role=${role}` : '';
@@ -154,10 +154,10 @@ export const restaurantAPI = {
     if (!menuItemData.has('restaurantId')) {
       menuItemData.append('restaurantId', restaurantId);
     }
-    
+
     const token = getToken();
     console.log(`Adding menu item to restaurant: ${restaurantId}`);
-    
+
     try {
       const response = await fetch(`${API_URLS.restaurant}/restaurants/${restaurantId}/menu`, {
         method: 'POST',
@@ -229,7 +229,7 @@ export const orderAPI = {
   },
 
   getUserOrders: async (userId: string) => {
-    return fetchWithAuth('order', `/orders/${userId}`);
+    return fetchWithAuth('order', `/orders/user/${userId}`);
   },
 
   getOrderById: async (id: string) => {
@@ -240,7 +240,7 @@ export const orderAPI = {
   getRestaurantOrders: async (restaurantId: string, status?: string) => {
     try {
       const queryString = status ? `?status=${status}` : '';
-      console.log('rid',restaurantId, 'qi', queryString)
+      console.log('rid', restaurantId, 'qi', queryString)
       return await fetchWithAuth('order', `/orders/restaurant/${restaurantId}${queryString}`);
     } catch (error) {
       if (error instanceof Error && error.message === 'Restaurant not found') {
@@ -355,7 +355,7 @@ export const adminAPI = {
   getAllCategories: async () => {
     return fetchWithAuth('admin', '/admin/categories');
   },
-  
+
   createCategory: async (categoryData: FormData) => {
     const token = getToken();
     const response = await fetch(`${API_URLS.admin}/admin/categories`, {
@@ -375,7 +375,7 @@ export const adminAPI = {
 
     return response.json();
   },
-  
+
   updateCategory: async (categoryId: string, categoryData: FormData) => {
     const token = getToken();
     const response = await fetch(`${API_URLS.admin}/admin/categories/${categoryId}`, {
@@ -395,52 +395,52 @@ export const adminAPI = {
 
     return response.json();
   },
-  
+
   deleteCategory: async (categoryId: string) => {
     return fetchWithAuth('admin', `/admin/categories/${categoryId}`, {
       method: 'DELETE',
     });
   },
-  
+
   // Restaurant management
   getAllRestaurants: async () => {
     return fetchWithAuth('admin', '/restaurants');
   },
-  
+
   approveRestaurant: async (restaurantId: string) => {
     return fetchWithAuth('admin', `/admin/restaurants/${restaurantId}/approve`, {
       method: 'PUT',
     });
   },
-  
+
   suspendRestaurant: async (restaurantId: string) => {
     return fetchWithAuth('admin', `/admin/restaurants/${restaurantId}/suspend`, {
       method: 'PUT',
     });
   },
-  
+
   // Driver management
   getAllDrivers: async () => {
     return fetchWithAuth('admin', '/admin/drivers');
   },
-  
+
   approveDriver: async (driverId: string) => {
     return fetchWithAuth('admin', `/admin/drivers/${driverId}/approve`, {
       method: 'PUT',
     });
   },
-  
+
   suspendDriver: async (driverId: string) => {
     return fetchWithAuth('admin', `/admin/drivers/${driverId}/suspend`, {
       method: 'PUT',
     });
   },
-  
+
   // Dashboard statistics
   getDashboardStats: async () => {
     return fetchWithAuth('admin', '/admin/stats');
   },
-  
+
   // Customer management
   getAllCustomers: async () => {
     return fetchWithAuth('admin', '/admin/customers');
