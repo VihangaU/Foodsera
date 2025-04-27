@@ -8,6 +8,7 @@ const Restaurant_SERVICE_URL = 'http://restaurent-service:5006';
 exports.createOrder = async (req, res) => {
   try {
     const {
+      userId,
       restaurantId,
       items,
       subtotal,
@@ -19,6 +20,8 @@ exports.createOrder = async (req, res) => {
       deliveryAddress,
       customerLocation
     } = req.body;
+
+    console.log(req.body)
 
     // Verify restaurant exists
     const restaurant = await axios.get(`${Restaurant_SERVICE_URL}/api/restaurants/${restaurantId}`);
@@ -51,7 +54,7 @@ exports.createOrder = async (req, res) => {
 
     // Create order
     const order = new Order({
-      userId: req.user.id,
+      userId,
       restaurantId,
       items: itemsWithDetails,
       subtotal,
