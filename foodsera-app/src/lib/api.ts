@@ -285,7 +285,7 @@ export const orderAPI = {
 
 // Payment API
 export const paymentAPI = {
-  createPaymentIntent: async (data: { amount: number; orderId: string }) => {
+  createPaymentIntent: async (data: { amount: number; orderId: string, userId: string }) => {
     return fetchWithAuth('payment', '/payments/create-payment-intent', {
       method: 'POST',
       body: JSON.stringify(data),

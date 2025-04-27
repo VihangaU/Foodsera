@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { CardElement, Elements, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { paymentAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Initialize Stripe with the publishable key
 const stripePromise = loadStripe('pk_test_51RDASLGghrco1QnNF5wtvbd8flMFR22kSRXcHP5xZiTN98oryUus9gU7BTSoBtCktCN2DzVJ5dNEUJsR22FyORlh00aoz20NPc');
@@ -48,6 +48,7 @@ const CardForm: React.FC<CardFormProps> = ({
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -63,7 +64,11 @@ const CardForm: React.FC<CardFormProps> = ({
 
     try {
       // 1. Create a payment intent on the server
-      const { clientSecret } = await paymentAPI.createPaymentIntent({ amount, orderId });
+      const { clientSecret } = await paymentAPI.createPaymentIntent({ 
+        amount, 
+        orderId, 
+        userId: user?._id 
+      });
 
       // 2. Confirm the payment with the card element
       const cardElement = elements.getElement(CardElement);
