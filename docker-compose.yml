@@ -14,12 +14,15 @@ services:
         condition: service_healthy
       notification-service:
         condition: service_healthy
+      order-service:
+        condition: service_healthy
     environment:
       - PORT=4000
       - AUTH_SERVICE_URL=http://auth-service:5001
       - DELIVERY_SERVICE_URL=http://delivery-service:5003
       - RESTAURENT_SERVICE_URL=http://restaurent-service:5006
       - NOTIFICATION_SERVICE_URL=http://notification-service:5007
+      - ORDER_SERVICE_URL=http://order-service:5004
     networks:
       - app-network
     healthcheck:
@@ -97,6 +100,20 @@ services:
       - app-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:5004" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  payment-service:
+    build: ./backend/services/payment
+    ports:
+      - "5005:5005"
+    environment:
+      - PORT=5005
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5005" ]
       interval: 10s
       timeout: 5s
       retries: 5

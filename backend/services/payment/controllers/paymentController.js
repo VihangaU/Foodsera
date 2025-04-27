@@ -1,6 +1,8 @@
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const Order = require('../../order/models/Order');
+const axios = require('axios');
+
+const Order_SERVICE_URL = 'http://order-service:5004';
 
 // Create a payment intent with Stripe
 exports.createPaymentIntent = async (req, res) => {
@@ -43,7 +45,8 @@ exports.confirmPayment = async (req, res) => {
     }
     
     // Update order payment status
-    const order = await Order.findById(orderId);
+    const order = await axios.get(`${Order_SERVICE_URL}/api/orders/${orderId}`);
+    // const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
@@ -101,7 +104,8 @@ exports.processRefund = async (req, res) => {
     const { orderId, amount, reason } = req.body;
     
     // Find order
-    const order = await Order.findById(orderId);
+    const order = await axios.get(`${Order_SERVICE_URL}/api/orders/${orderId}`);
+    // const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
