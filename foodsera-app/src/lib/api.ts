@@ -211,6 +211,7 @@ export const restaurantAPI = {
 // Order API
 export const orderAPI = {
   createOrder: async (orderData: {
+    userId: string;
     restaurantId: string;
     items: Omit<CartItem, '_id' | 'menuItem'>[];
     subtotal: number;
