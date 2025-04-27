@@ -163,19 +163,6 @@ exports.updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Check authorization
-    if (req.user.role === 'restaurant') {
-      const restaurant = await axios.get(`${Restaurant_SERVICE_URL}/api/restaurants/${order.restaurantId}`);
-      // const restaurant = await Restaurant.findById(order.restaurantId);
-      if (!restaurant || restaurant.owner.toString() !== req.user.id) {
-        return res.status(403).json({ message: 'Not authorized' });
-      }
-    } else if (req.user.role === 'delivery') {
-      if (order.assignedDriverId?.toString() !== req.user.id && status !== 'delivered') {
-        return res.status(403).json({ message: 'Not authorized' });
-      }
-    }
-
     // Update order status
     order.status = status;
 

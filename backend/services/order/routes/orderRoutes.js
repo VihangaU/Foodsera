@@ -20,7 +20,6 @@ router.get(
 
 router.put(
   '/:id/status',
-  authorize(['restaurant', 'delivery', 'admin']),
   orderController.updateOrderStatus
 );
 
