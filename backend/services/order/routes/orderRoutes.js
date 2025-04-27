@@ -25,20 +25,17 @@ router.put(
 
 router.put(
   '/:id/assign-driver',
-  authorize(['restaurant', 'admin']),
   orderController.assignDriver
 );
 
 // Delivery driver routes
 router.get(
   '/driver/orders',
-  authorize(['delivery']),
   orderController.getDriverOrders
 );
 
 router.put(
   '/driver/location',
-  authorize(['delivery']),
   orderController.updateDriverLocation
 );
 

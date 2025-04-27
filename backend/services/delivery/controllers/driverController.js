@@ -10,7 +10,7 @@ exports.getAvailableDrivers = async (req, res) => {
     const drivers = await Driver.find({
       status: 'available',
       isActive: true
-    }).populate('userId', 'name email');
+    });
 
     res.json(drivers);
   } catch (error) {
