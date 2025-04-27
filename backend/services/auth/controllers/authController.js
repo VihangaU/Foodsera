@@ -5,7 +5,7 @@ const { uploadImage } = require('../utils/uploadImage');
 require('dotenv').config();
 
 // Configure delivery service URL from environment variable
-const DELIVERY_SERVICE_URL = 'http://host.docker.internal:4000/delivery-proxy';
+const DELIVERY_SERVICE_URL = 'http://delivery-service:5003';
 
 // Register user
 exports.register = async (req, res) => {

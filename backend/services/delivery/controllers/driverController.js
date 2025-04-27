@@ -1,7 +1,7 @@
 const Driver = require('../models/Driver');
 const axios = require('axios');
 
-const DELIVERY_SERVICE_URL = 'http://host.docker.internal:4000/auth-proxy';
+const DELIVERY_SERVICE_URL = 'http://auth-service:5001';
 
 // Get all available drivers
 exports.getAvailableDrivers = async (req, res) => {

@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  gateway:
+    build: ./backend/services/gateway
+    ports:
+      - "4000:4000"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      delivery-service:
+        condition: service_healthy
+      restaurent-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    environment:
+      - PORT=4000
+      - AUTH_SERVICE_URL=http://auth-service:5001
+      - DELIVERY_SERVICE_URL=http://delivery-service:5003
+      - RESTAURENT_SERVICE_URL=http://restaurent-service:5006
+      - NOTIFICATION_SERVICE_URL=http://notification-service:5007
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build: ./backend/services/auth
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - DELIVERY_SERVICE_URL=http://delivery-service:5003 # Direct to delivery-service
+      - JWT_SECRET=your_auth_jwt_secret_here
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  delivery-service:
+    build: ./backend/services/delivery
+    ports:
+      - "5003:5003"
+    environment:
+      - PORT=5003
+      - AUTH_SERVICE_URL=http://auth-service:5001 # Direct to auth-service
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  restaurent-service:
+    build: ./backend/services/restaurant
+    ports:
+      - "5006:5006"
+    environment:
+      - PORT=5006
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5006"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  notification-service:
+    build: ./backend/services/notification
+    ports:
+      - "5007:5007"
+    environment:
+      - PORT=5007
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5007"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
