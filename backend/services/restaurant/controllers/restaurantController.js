@@ -33,17 +33,17 @@ exports.createRestaurant = async (req, res) => {
   try {
     console.log('Request body:', req.body);
     console.log('Request files:', req.files);
-    
-    const { name, description, categories, deliveryFee, deliveryTime, address } = req.body;
-    
+
+    const { name, description, categories, deliveryFee, deliveryTime, address, owner } = req.body;
+
     // Upload images
     let logoUrl, imageUrl;
-    
+
     if (!req.files || !req.files.logo || !req.files.image) {
       console.error('Missing files in request:', req.files);
       return res.status(400).json({ message: 'Logo and image are required' });
     }
-    
+
     try {
       if (req.files.logo) {
         logoUrl = await uploadImage(
@@ -52,7 +52,7 @@ exports.createRestaurant = async (req, res) => {
           `logo-${Date.now()}`
         );
       }
-      
+
       if (req.files.image) {
         imageUrl = await uploadImage(
           req.files.image[0].buffer,
@@ -64,19 +64,19 @@ exports.createRestaurant = async (req, res) => {
       console.error('Error uploading images:', uploadError);
       return res.status(500).json({ message: 'Error uploading images' });
     }
-    
+
     if (!logoUrl || !imageUrl) {
       return res.status(400).json({ message: 'Logo and image are required' });
     }
-    
+
     // Process categories (ensure it's an array)
     let categoryArray = [];
     if (categories) {
       categoryArray = categories.split(',').map(cat => cat.trim()).filter(cat => cat.length > 0);
     }
-    
+
     const restaurant = new Restaurant({
-      owner: req.user.id,
+      owner,
       name,
       description,
       logo: logoUrl,
@@ -87,7 +87,9 @@ exports.createRestaurant = async (req, res) => {
       address,
       isOpen: true
     });
-    
+
+    console.log('Restaurant:', restaurant);
+
     await restaurant.save();
     res.status(201).json(restaurant);
   } catch (error) {
@@ -101,7 +103,7 @@ exports.updateRestaurant = async (req, res) => {
   try {
     const { name, description, categories, deliveryFee, deliveryTime, address, isOpen } = req.body;
     const restaurantFields = {};
-    
+
     if (name) restaurantFields.name = name;
     if (description) restaurantFields.description = description;
     if (categories) restaurantFields.categories = categories.split(',').map(cat => cat.trim());
@@ -109,7 +111,7 @@ exports.updateRestaurant = async (req, res) => {
     if (deliveryTime) restaurantFields.deliveryTime = deliveryTime;
     if (address) restaurantFields.address = address;
     if (isOpen !== undefined) restaurantFields.isOpen = isOpen === 'true';
-    
+
     // Upload new images if provided
     if (req.files) {
       if (req.files.logo) {
@@ -119,7 +121,7 @@ exports.updateRestaurant = async (req, res) => {
           `logo-${Date.now()}`
         );
       }
-      
+
       if (req.files.image) {
         restaurantFields.image = await uploadImage(
           req.files.image[0].buffer,
@@ -128,24 +130,24 @@ exports.updateRestaurant = async (req, res) => {
         );
       }
     }
-    
+
     // Check if restaurant exists and user is owner
     let restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
-    
+
     // Verify ownership
     if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
-    
+
     restaurant = await Restaurant.findByIdAndUpdate(
       req.params.id,
       { $set: restaurantFields },
       { new: true }
     );
-    
+
     res.json(restaurant);
   } catch (error) {
     console.error('Error updating restaurant:', error.message);
@@ -160,18 +162,18 @@ exports.deleteRestaurant = async (req, res) => {
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
-    
+
     // Verify ownership
     if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
-    
+
     // Delete all menu items associated with this restaurant
     await MenuItem.deleteMany({ restaurantId: req.params.id });
-    
+
     // Delete the restaurant
     await Restaurant.findByIdAndDelete(req.params.id);
-    
+
     res.json({ message: 'Restaurant deleted' });
   } catch (error) {
     console.error('Error deleting restaurant:', error.message);
@@ -194,7 +196,7 @@ exports.getMenuItems = async (req, res) => {
 exports.getMenuItemById = async (req, res) => {
   try {
     const menuItem = await MenuItem.findById(req.params.id);
-    
+
     if (!menuItem) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
@@ -211,27 +213,27 @@ exports.addMenuItem = async (req, res) => {
   try {
     console.log('Request body:', req.body);
     console.log('Request file:', req.file);
-    
+
     const { name, description, price, categories, popular, available } = req.body;
-    
+
     // Check if restaurant exists and user is owner
     const restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
-    
+
     // Verify ownership
     if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
-    
+
     // Upload image
     let imageUrl;
     if (!req.file) {
       console.error('No file uploaded');
       return res.status(400).json({ message: 'Image is required' });
     }
-    
+
     try {
       imageUrl = await uploadImage(
         req.file.buffer,
@@ -242,11 +244,11 @@ exports.addMenuItem = async (req, res) => {
       console.error('Error uploading image:', uploadError);
       return res.status(500).json({ message: 'Error uploading image' });
     }
-    
+
     if (!imageUrl) {
       return res.status(500).json({ message: 'Failed to upload image' });
     }
-    
+
     const menuItem = new MenuItem({
       restaurantId: req.params.id,
       name,
@@ -257,7 +259,7 @@ exports.addMenuItem = async (req, res) => {
       popular: popular === 'true',
       available: available === 'true'
     });
-    
+
     await menuItem.save();
     res.status(201).json(menuItem);
   } catch (error) {
@@ -271,14 +273,14 @@ exports.updateMenuItem = async (req, res) => {
   try {
     const { name, description, price, categories, popular, available } = req.body;
     const menuItemFields = {};
-    
+
     if (name) menuItemFields.name = name;
     if (description) menuItemFields.description = description;
     if (price) menuItemFields.price = price;
     if (categories) menuItemFields.categories = categories.split(',').map(cat => cat.trim());
     if (popular !== undefined) menuItemFields.popular = popular === 'true';
     if (available !== undefined) menuItemFields.available = available === 'true';
-    
+
     // Upload new image if provided
     if (req.file) {
       menuItemFields.image = await uploadImage(
@@ -287,30 +289,30 @@ exports.updateMenuItem = async (req, res) => {
         `menu-${Date.now()}`
       );
     }
-    
+
     // Check if menu item exists
     let menuItem = await MenuItem.findById(req.params.itemId);
     if (!menuItem) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
-    
+
     // Check if user is restaurant owner
     const restaurant = await Restaurant.findById(menuItem.restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
-    
+
     // Verify ownership
     if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
-    
+
     menuItem = await MenuItem.findByIdAndUpdate(
       req.params.itemId,
       { $set: menuItemFields },
       { new: true }
     );
-    
+
     res.json(menuItem);
   } catch (error) {
     console.error('Error updating menu item:', error.message);
@@ -326,18 +328,18 @@ exports.deleteMenuItem = async (req, res) => {
     if (!menuItem) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
-    
+
     // Check if user is restaurant owner
     const restaurant = await Restaurant.findById(menuItem.restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
-    
+
     // Verify ownership
     if (restaurant.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
-    
+
     await MenuItem.findByIdAndDelete(req.params.itemId);
     res.json({ message: 'Menu item removed' });
   } catch (error) {
@@ -361,13 +363,13 @@ exports.getAllCategories = async (req, res) => {
 exports.addCategory = async (req, res) => {
   try {
     const { name } = req.body;
-    
+
     // Check if category already exists
     const existingCategory = await Category.findOne({ name });
     if (existingCategory) {
       return res.status(400).json({ message: 'Category already exists' });
     }
-    
+
     // Upload image
     let imageUrl;
     if (req.file) {
@@ -379,12 +381,12 @@ exports.addCategory = async (req, res) => {
     } else {
       return res.status(400).json({ message: 'Image is required' });
     }
-    
+
     const category = new Category({
       name,
       image: imageUrl
     });
-    
+
     await category.save();
     res.status(201).json(category);
   } catch (error) {

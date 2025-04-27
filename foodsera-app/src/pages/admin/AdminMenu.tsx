@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash, 
-  CheckCircle, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash,
+  CheckCircle,
   XCircle,
   AlertCircle,
   Upload
@@ -36,34 +36,34 @@ const AdminMenu: React.FC = () => {
   ]);
   const { user } = useAuth();
   const [userRestaurant, setUserRestaurant] = useState<Restaurant | null>(null);
-  
+
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string>('');
   const [menuItemImageFile, setMenuItemImageFile] = useState<File | null>(null);
   const [menuItemImagePreview, setMenuItemImagePreview] = useState<string>('');
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         if (!user?._id) {
           setError('Unable to identify restaurant owner. Please login again.');
           return;
         }
-        
+
         const allRestaurants = await restaurantAPI.getAllRestaurants();
-        const userOwnedRestaurant = allRestaurants.find((restaurant: Restaurant) => 
+        const userOwnedRestaurant = allRestaurants.find((restaurant: Restaurant) =>
           restaurant.owner === user._id
         );
-        
+
         if (userOwnedRestaurant) {
           setUserRestaurant(userOwnedRestaurant);
           console.log('Found user restaurant:', userOwnedRestaurant);
-          
+
           const items = await restaurantAPI.getMenuItems(userOwnedRestaurant._id);
           setMenuItems(items);
         } else {
@@ -72,7 +72,7 @@ const AdminMenu: React.FC = () => {
           setIsLoading(false);
           return;
         }
-        
+
         const categories = await restaurantAPI.getAllCategories();
         setMenuCategories([
           { _id: 'all', name: 'All Items', image: '' },
@@ -85,10 +85,10 @@ const AdminMenu: React.FC = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchData();
   }, [user]);
-  
+
   const [formData, setFormData] = useState<{
     name: string;
     description: string;
@@ -106,7 +106,7 @@ const AdminMenu: React.FC = () => {
     available: true,
     image: '',
   });
-  
+
   const [restaurantFormData, setRestaurantFormData] = useState<{
     name: string;
     description: string;
@@ -122,25 +122,25 @@ const AdminMenu: React.FC = () => {
     address: '',
     categories: []
   });
-  
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
-  
+
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
   };
-  
+
   const filteredItems = menuItems
-    .filter(item => 
-      searchQuery === '' || 
+    .filter(item =>
+      searchQuery === '' ||
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .filter(item => 
+    .filter(item =>
       activeCategory === 'all' || item.categories.includes(activeCategory)
     );
-  
+
   const openAddDialog = () => {
     if (!userRestaurant) {
       toast({
@@ -151,7 +151,7 @@ const AdminMenu: React.FC = () => {
       setIsCreateRestaurantOpen(true);
       return;
     }
-    
+
     setFormData({
       name: '',
       description: '',
@@ -165,7 +165,7 @@ const AdminMenu: React.FC = () => {
     setMenuItemImagePreview('');
     setIsAddDialogOpen(true);
   };
-  
+
   const openEditDialog = (item: MenuItem) => {
     setCurrentItem(item);
     setFormData({
@@ -181,27 +181,27 @@ const AdminMenu: React.FC = () => {
     setMenuItemImagePreview('');
     setIsEditDialogOpen(true);
   };
-  
+
   const openDeleteDialog = (item: MenuItem) => {
     setCurrentItem(item);
     setIsDeleteDialogOpen(true);
   };
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleRestaurantInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setRestaurantFormData(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setFormData(prev => ({ ...prev, [name]: checked }));
   };
-  
+
   const handleCategorySelect = (category: string) => {
     setFormData(prev => {
       if (prev.categories.includes(category)) {
@@ -217,7 +217,7 @@ const AdminMenu: React.FC = () => {
       }
     });
   };
-  
+
   const handleRestaurantCategorySelect = (category: string) => {
     setRestaurantFormData(prev => {
       if (prev.categories.includes(category)) {
@@ -233,12 +233,12 @@ const AdminMenu: React.FC = () => {
       }
     });
   };
-  
+
   const handleRestaurantLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setLogoFile(file);
-      
+
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
@@ -248,12 +248,12 @@ const AdminMenu: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleRestaurantImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImageFile(file);
-      
+
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
@@ -263,12 +263,12 @@ const AdminMenu: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleMenuItemImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setMenuItemImageFile(file);
-      
+
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
@@ -278,7 +278,7 @@ const AdminMenu: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleCreateRestaurant = async () => {
     try {
       if (!user?._id) {
@@ -289,7 +289,7 @@ const AdminMenu: React.FC = () => {
         });
         return;
       }
-      
+
       if (!logoFile || !imageFile) {
         toast({
           title: "Error",
@@ -298,40 +298,41 @@ const AdminMenu: React.FC = () => {
         });
         return;
       }
-      
+
       const formData = new FormData();
       formData.append('name', restaurantFormData.name);
       formData.append('description', restaurantFormData.description);
       formData.append('deliveryFee', restaurantFormData.deliveryFee);
       formData.append('deliveryTime', restaurantFormData.deliveryTime);
       formData.append('address', restaurantFormData.address);
-      
+
       // Ensure categories is a string with comma-separated values
       if (restaurantFormData.categories && restaurantFormData.categories.length > 0) {
         formData.append('categories', restaurantFormData.categories.join(','));
       } else {
         formData.append('categories', '');
       }
-      
+
       // Ensure we're appending the actual File objects
       formData.append('logo', logoFile);
       formData.append('image', imageFile);
-      
+      formData.append('owner', user?._id);
+
       console.log('FormData prepared for submission:');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}: ${value instanceof File ? `File: ${value.name}` : value}`);
       }
-      
+
       const addedRestaurant = await restaurantAPI.createRestaurant(formData);
-      
+
       setUserRestaurant(addedRestaurant);
       setIsCreateRestaurantOpen(false);
-      
+
       toast({
         title: "Restaurant created",
         description: `${addedRestaurant.name} has been created successfully`,
       });
-      
+
       window.location.reload();
     } catch (error) {
       console.error('Failed to create restaurant:', error);
@@ -342,7 +343,7 @@ const AdminMenu: React.FC = () => {
       });
     }
   };
-  
+
   const handleAddItem = async () => {
     try {
       if (!userRestaurant?._id) {
@@ -353,7 +354,7 @@ const AdminMenu: React.FC = () => {
         });
         return;
       }
-      
+
       if (!menuItemImageFile) {
         toast({
           title: "Error",
@@ -362,7 +363,7 @@ const AdminMenu: React.FC = () => {
         });
         return;
       }
-      
+
       const newItemData = new FormData();
       newItemData.append('name', formData.name);
       newItemData.append('description', formData.description);
@@ -370,27 +371,27 @@ const AdminMenu: React.FC = () => {
       newItemData.append('categories', formData.categories.join(','));
       newItemData.append('popular', String(formData.popular));
       newItemData.append('available', String(formData.available));
-      
+
       // Log the image file details for debugging
       console.log('Image file details:', {
         name: menuItemImageFile.name,
         type: menuItemImageFile.type,
         size: menuItemImageFile.size
       });
-      
+
       // Ensure the image is properly appended to FormData
       newItemData.append('image', menuItemImageFile);
-      
+
       // Log the FormData contents for debugging
       for (const pair of newItemData.entries()) {
         console.log(`${pair[0]}: ${pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1]}`);
       }
-      
+
       const addedItem = await restaurantAPI.addMenuItem(userRestaurant._id, newItemData);
-      
+
       setMenuItems(prev => [...prev, addedItem]);
       setIsAddDialogOpen(false);
-      
+
       toast({
         title: "Menu item added",
         description: `${addedItem.name} has been added to your menu`,
@@ -404,10 +405,10 @@ const AdminMenu: React.FC = () => {
       });
     }
   };
-  
+
   const handleEditItem = async () => {
     if (!currentItem) return;
-    
+
     try {
       const menuItemData = new FormData();
       menuItemData.append('name', formData.name);
@@ -416,21 +417,21 @@ const AdminMenu: React.FC = () => {
       menuItemData.append('categories', formData.categories.join(','));
       menuItemData.append('popular', String(formData.popular));
       menuItemData.append('available', String(formData.available));
-      
+
       if (menuItemImageFile) {
         menuItemData.append('image', menuItemImageFile);
       }
-      
+
       const updatedItem = await restaurantAPI.updateMenuItem(currentItem._id, menuItemData);
-      
-      setMenuItems(prev => 
-        prev.map(item => 
+
+      setMenuItems(prev =>
+        prev.map(item =>
           item._id === currentItem._id ? updatedItem : item
         )
       );
-      
+
       setIsEditDialogOpen(false);
-      
+
       toast({
         title: "Menu item updated",
         description: `${updatedItem.name} has been updated`,
@@ -444,19 +445,19 @@ const AdminMenu: React.FC = () => {
       });
     }
   };
-  
+
   const handleDeleteItem = async () => {
     if (!currentItem) return;
-    
+
     try {
       await restaurantAPI.deleteMenuItem(currentItem._id);
-      
-      setMenuItems(prev => 
+
+      setMenuItems(prev =>
         prev.filter(item => item._id !== currentItem._id)
       );
-      
+
       setIsDeleteDialogOpen(false);
-      
+
       toast({
         title: "Menu item deleted",
         description: `${currentItem.name} has been removed from your menu`,
@@ -470,20 +471,20 @@ const AdminMenu: React.FC = () => {
       });
     }
   };
-  
+
   const handleToggleAvailability = async (item: MenuItem) => {
     try {
       const formData = new FormData();
       formData.append('available', String(!item.available));
-      
+
       const updatedItem = await restaurantAPI.updateMenuItem(item._id, formData);
-      
-      setMenuItems(prev => 
-        prev.map(menuItem => 
+
+      setMenuItems(prev =>
+        prev.map(menuItem =>
           menuItem._id === item._id ? updatedItem : menuItem
         )
       );
-      
+
       toast({
         title: item.available ? "Item marked as unavailable" : "Item marked as available",
         description: `${item.name} is now ${item.available ? 'unavailable' : 'available'} for ordering`,
@@ -497,7 +498,7 @@ const AdminMenu: React.FC = () => {
       });
     }
   };
-  
+
   if (isLoading) {
     return (
       <div>
@@ -514,7 +515,7 @@ const AdminMenu: React.FC = () => {
       </div>
     );
   }
-  
+
   if (error && !userRestaurant) {
     return (
       <div className="text-center py-10">
@@ -526,14 +527,14 @@ const AdminMenu: React.FC = () => {
             You need to create a restaurant before you can manage menu items.
           </AlertDescription>
         </Alert>
-        
-        <Button 
+
+        <Button
           onClick={() => setIsCreateRestaurantOpen(true)}
           className="mb-4"
         >
           Create Restaurant
         </Button>
-        
+
         <Dialog open={isCreateRestaurantOpen} onOpenChange={setIsCreateRestaurantOpen}>
           <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
@@ -542,7 +543,7 @@ const AdminMenu: React.FC = () => {
                 Fill in the details to create your restaurant.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="name" className="text-right text-sm font-medium">
@@ -558,7 +559,7 @@ const AdminMenu: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="description" className="text-right text-sm font-medium">
                   Description
@@ -573,7 +574,7 @@ const AdminMenu: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="deliveryFee" className="text-right text-sm font-medium">
                   Delivery Fee
@@ -591,7 +592,7 @@ const AdminMenu: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="deliveryTime" className="text-right text-sm font-medium">
                   Delivery Time
@@ -606,7 +607,7 @@ const AdminMenu: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="address" className="text-right text-sm font-medium">
                   Address
@@ -621,7 +622,7 @@ const AdminMenu: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-start gap-4">
                 <label className="text-right text-sm font-medium pt-2">
                   Categories
@@ -630,13 +631,12 @@ const AdminMenu: React.FC = () => {
                   {menuCategories
                     .filter(category => category._id !== 'all')
                     .map(category => (
-                      <label 
-                        key={category._id} 
-                        className={`px-3 py-1 text-sm rounded-full cursor-pointer ${
-                          restaurantFormData.categories.includes(category._id)
+                      <label
+                        key={category._id}
+                        className={`px-3 py-1 text-sm rounded-full cursor-pointer ${restaurantFormData.categories.includes(category._id)
                             ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
                             : 'bg-gray-100 text-gray-800 border border-gray-200'
-                        }`}
+                          }`}
                       >
                         <input
                           type="checkbox"
@@ -650,7 +650,7 @@ const AdminMenu: React.FC = () => {
                   }
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-4 items-start gap-4">
                 <label htmlFor="logo" className="text-right text-sm font-medium pt-2">
                   Logo
@@ -667,10 +667,10 @@ const AdminMenu: React.FC = () => {
                   />
                   {logoPreview && (
                     <div className="mt-2">
-                      <img 
-                        src={logoPreview} 
-                        alt="Logo Preview" 
-                        className="w-24 h-24 object-cover rounded-md" 
+                      <img
+                        src={logoPreview}
+                        alt="Logo Preview"
+                        className="w-24 h-24 object-cover rounded-md"
                       />
                     </div>
                   )}
@@ -681,7 +681,7 @@ const AdminMenu: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-4 items-start gap-4">
                 <label htmlFor="image" className="text-right text-sm font-medium pt-2">
                   Cover Image
@@ -698,10 +698,10 @@ const AdminMenu: React.FC = () => {
                   />
                   {imagePreview && (
                     <div className="mt-2">
-                      <img 
-                        src={imagePreview} 
-                        alt="Restaurant Image Preview" 
-                        className="w-full h-40 object-cover rounded-md" 
+                      <img
+                        src={imagePreview}
+                        alt="Restaurant Image Preview"
+                        className="w-full h-40 object-cover rounded-md"
                       />
                     </div>
                   )}
@@ -713,7 +713,7 @@ const AdminMenu: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCreateRestaurantOpen(false)}>
                 Cancel
@@ -727,13 +727,13 @@ const AdminMenu: React.FC = () => {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="text-center py-10">
         <h1 className="text-2xl font-bold mb-4">Menu Management</h1>
         <div className="text-red-600 mb-4">{error}</div>
-        <Button 
+        <Button
           onClick={() => window.location.reload()}
           variant="outline"
         >
@@ -742,7 +742,7 @@ const AdminMenu: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -751,7 +751,7 @@ const AdminMenu: React.FC = () => {
           <Plus className="h-4 w-4 mr-2" /> Add Item
         </Button>
       </div>
-      
+
       {userRestaurant && (
         <Alert className="mb-6">
           <AlertCircle className="h-4 w-4" />
@@ -761,7 +761,7 @@ const AdminMenu: React.FC = () => {
           </AlertDescription>
         </Alert>
       )}
-      
+
       <div className="mb-6">
         <div className="relative mb-4">
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -772,17 +772,17 @@ const AdminMenu: React.FC = () => {
             onChange={handleSearch}
           />
         </div>
-        
-        <Tabs 
-          defaultValue="all" 
+
+        <Tabs
+          defaultValue="all"
           value={activeCategory}
           onValueChange={handleCategoryChange}
           className="w-full"
         >
           <TabsList className="w-full justify-start overflow-x-auto">
             {menuCategories.map(category => (
-              <TabsTrigger 
-                key={category._id} 
+              <TabsTrigger
+                key={category._id}
                 value={category._id}
                 className="px-4"
               >
@@ -792,7 +792,7 @@ const AdminMenu: React.FC = () => {
           </TabsList>
         </Tabs>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredItems.length === 0 ? (
           <div className="col-span-full py-8 text-center text-gray-500">
@@ -800,13 +800,13 @@ const AdminMenu: React.FC = () => {
           </div>
         ) : (
           filteredItems.map(item => (
-            <div 
-              key={item._id} 
+            <div
+              key={item._id}
               className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow"
             >
               <div className="relative h-48">
-                <img 
-                  src={item.image} 
+                <img
+                  src={item.image}
                   alt={item.name}
                   className="w-full h-full object-cover"
                 />
@@ -823,15 +823,15 @@ const AdminMenu: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <div className="p-4">
                 <h3 className="font-semibold mb-1">{item.name}</h3>
                 <p className="text-sm text-gray-500 mb-2 line-clamp-2">{item.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="font-medium">${item.price.toFixed(2)}</span>
                   <div className="flex space-x-1">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleToggleAvailability(item)}
                     >
@@ -841,15 +841,15 @@ const AdminMenu: React.FC = () => {
                         <CheckCircle className="h-4 w-4 text-green-500" />
                       )}
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => openEditDialog(item)}
                     >
                       <Edit className="h-4 w-4 text-gray-400" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => openDeleteDialog(item)}
                     >
@@ -862,7 +862,7 @@ const AdminMenu: React.FC = () => {
           ))
         )}
       </div>
-      
+
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
@@ -871,7 +871,7 @@ const AdminMenu: React.FC = () => {
               Fill in the details to add a new item to your menu.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="name" className="text-right text-sm font-medium">
@@ -887,7 +887,7 @@ const AdminMenu: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="description" className="text-right text-sm font-medium">
                 Description
@@ -902,7 +902,7 @@ const AdminMenu: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="price" className="text-right text-sm font-medium">
                 Price
@@ -920,7 +920,7 @@ const AdminMenu: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-start gap-4">
               <label className="text-right text-sm font-medium pt-2">
                 Categories
@@ -929,13 +929,12 @@ const AdminMenu: React.FC = () => {
                 {menuCategories
                   .filter(category => category._id !== 'all')
                   .map(category => (
-                    <label 
-                      key={category._id} 
-                      className={`px-3 py-1 text-sm rounded-full cursor-pointer ${
-                        formData.categories.includes(category._id)
+                    <label
+                      key={category._id}
+                      className={`px-3 py-1 text-sm rounded-full cursor-pointer ${formData.categories.includes(category._id)
                           ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
                           : 'bg-gray-100 text-gray-800 border border-gray-200'
-                      }`}
+                        }`}
                     >
                       <input
                         type="checkbox"
@@ -949,7 +948,7 @@ const AdminMenu: React.FC = () => {
                 }
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <label className="text-right text-sm font-medium">
                 Options
@@ -965,7 +964,7 @@ const AdminMenu: React.FC = () => {
                   />
                   <span className="text-sm">Mark as popular</span>
                 </label>
-                
+
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -978,7 +977,7 @@ const AdminMenu: React.FC = () => {
                 </label>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 items-start gap-4">
               <label htmlFor="menuItemImage" className="text-right text-sm font-medium pt-2">
                 Image
@@ -995,10 +994,10 @@ const AdminMenu: React.FC = () => {
                 />
                 {menuItemImagePreview && (
                   <div className="mt-2">
-                    <img 
-                      src={menuItemImagePreview} 
-                      alt="Menu Item Image Preview" 
-                      className="w-full h-40 object-cover rounded-md" 
+                    <img
+                      src={menuItemImagePreview}
+                      alt="Menu Item Image Preview"
+                      className="w-full h-40 object-cover rounded-md"
                     />
                   </div>
                 )}
@@ -1010,7 +1009,7 @@ const AdminMenu: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
               Cancel
@@ -1021,7 +1020,7 @@ const AdminMenu: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
@@ -1030,7 +1029,7 @@ const AdminMenu: React.FC = () => {
               Update the details of this menu item.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="edit-name" className="text-right text-sm font-medium">
@@ -1045,7 +1044,7 @@ const AdminMenu: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="edit-description" className="text-right text-sm font-medium">
                 Description
@@ -1059,7 +1058,7 @@ const AdminMenu: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="edit-price" className="text-right text-sm font-medium">
                 Price
@@ -1076,7 +1075,7 @@ const AdminMenu: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-start gap-4">
               <label className="text-right text-sm font-medium pt-2">
                 Categories
@@ -1085,13 +1084,12 @@ const AdminMenu: React.FC = () => {
                 {menuCategories
                   .filter(category => category._id !== 'all')
                   .map(category => (
-                    <label 
-                      key={category._id} 
-                      className={`px-3 py-1 text-sm rounded-full cursor-pointer ${
-                        formData.categories.includes(category._id)
+                    <label
+                      key={category._id}
+                      className={`px-3 py-1 text-sm rounded-full cursor-pointer ${formData.categories.includes(category._id)
                           ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
                           : 'bg-gray-100 text-gray-800 border border-gray-200'
-                      }`}
+                        }`}
                     >
                       <input
                         type="checkbox"
@@ -1105,7 +1103,7 @@ const AdminMenu: React.FC = () => {
                 }
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <label className="text-right text-sm font-medium">
                 Options
@@ -1121,7 +1119,7 @@ const AdminMenu: React.FC = () => {
                   />
                   <span className="text-sm">Mark as popular</span>
                 </label>
-                
+
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -1134,7 +1132,7 @@ const AdminMenu: React.FC = () => {
                 </label>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 items-start gap-4">
               <label htmlFor="editMenuItemImage" className="text-right text-sm font-medium pt-2">
                 Image
@@ -1150,18 +1148,18 @@ const AdminMenu: React.FC = () => {
                 />
                 {menuItemImagePreview ? (
                   <div className="mt-2">
-                    <img 
-                      src={menuItemImagePreview} 
-                      alt="Menu Item Image Preview" 
-                      className="w-full h-40 object-cover rounded-md" 
+                    <img
+                      src={menuItemImagePreview}
+                      alt="Menu Item Image Preview"
+                      className="w-full h-40 object-cover rounded-md"
                     />
                   </div>
                 ) : currentItem && currentItem.image ? (
                   <div className="mt-2">
-                    <img 
-                      src={currentItem.image} 
-                      alt="Current Menu Item Image" 
-                      className="w-full h-40 object-cover rounded-md" 
+                    <img
+                      src={currentItem.image}
+                      alt="Current Menu Item Image"
+                      className="w-full h-40 object-cover rounded-md"
                     />
                   </div>
                 ) : (
@@ -1172,7 +1170,7 @@ const AdminMenu: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
@@ -1183,7 +1181,7 @@ const AdminMenu: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -1192,12 +1190,12 @@ const AdminMenu: React.FC = () => {
               Are you sure you want to delete this item? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          
+
           {currentItem && (
             <div className="flex items-center py-4">
               <div className="w-16 h-16 rounded overflow-hidden mr-4">
-                <img 
-                  src={currentItem.image} 
+                <img
+                  src={currentItem.image}
                   alt={currentItem.name}
                   className="w-full h-full object-cover"
                 />
@@ -1208,7 +1206,7 @@ const AdminMenu: React.FC = () => {
               </div>
             </div>
           )}
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
               Cancel
