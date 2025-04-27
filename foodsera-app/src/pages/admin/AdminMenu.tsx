@@ -634,8 +634,8 @@ const AdminMenu: React.FC = () => {
                       <label
                         key={category._id}
                         className={`px-3 py-1 text-sm rounded-full cursor-pointer ${restaurantFormData.categories.includes(category._id)
-                            ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
-                            : 'bg-gray-100 text-gray-800 border border-gray-200'
+                          ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
+                          : 'bg-gray-100 text-gray-800 border border-gray-200'
                           }`}
                       >
                         <input
@@ -932,8 +932,8 @@ const AdminMenu: React.FC = () => {
                     <label
                       key={category._id}
                       className={`px-3 py-1 text-sm rounded-full cursor-pointer ${formData.categories.includes(category._id)
-                          ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
-                          : 'bg-gray-100 text-gray-800 border border-gray-200'
+                        ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
+                        : 'bg-gray-100 text-gray-800 border border-gray-200'
                         }`}
                     >
                       <input
@@ -1087,8 +1087,8 @@ const AdminMenu: React.FC = () => {
                     <label
                       key={category._id}
                       className={`px-3 py-1 text-sm rounded-full cursor-pointer ${formData.categories.includes(category._id)
-                          ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
-                          : 'bg-gray-100 text-gray-800 border border-gray-200'
+                        ? 'bg-foodix-100 text-foodix-800 border border-foodix-300'
+                        : 'bg-gray-100 text-gray-800 border border-gray-200'
                         }`}
                     >
                       <input

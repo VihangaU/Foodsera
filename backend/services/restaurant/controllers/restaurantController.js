@@ -277,7 +277,7 @@ exports.updateMenuItem = async (req, res) => {
     }
 
     // Check if menu item exists
-    let menuItem = await MenuItem.findById(req.params.itemId);
+    let menuItem = await MenuItem.findById(req.params.id);
     if (!menuItem) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
@@ -289,7 +289,7 @@ exports.updateMenuItem = async (req, res) => {
     }
 
     menuItem = await MenuItem.findByIdAndUpdate(
-      req.params.itemId,
+      req.params.id,
       { $set: menuItemFields },
       { new: true }
     );
@@ -305,7 +305,7 @@ exports.updateMenuItem = async (req, res) => {
 exports.deleteMenuItem = async (req, res) => {
   try {
     // Check if menu item exists
-    const menuItem = await MenuItem.findById(req.params.itemId);
+    const menuItem = await MenuItem.findById(req.params.id);
     if (!menuItem) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
@@ -316,7 +316,7 @@ exports.deleteMenuItem = async (req, res) => {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
 
-    await MenuItem.findByIdAndDelete(req.params.itemId);
+    await MenuItem.findByIdAndDelete(req.params.id);
     res.json({ message: 'Menu item removed' });
   } catch (error) {
     console.error('Error deleting menu item:', error.message);
