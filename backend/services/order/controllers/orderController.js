@@ -21,7 +21,6 @@ exports.createOrder = async (req, res) => {
       customerLocation
     } = req.body;
 
-    console.log(req.body)
 
     // Verify restaurant exists
     const restaurant = await axios.get(`${Restaurant_SERVICE_URL}/api/restaurants/${restaurantId}`);
@@ -39,14 +38,14 @@ exports.createOrder = async (req, res) => {
       }
 
       // Verify the restaurant is the one that offers this menu item
-      if (menuItem.restaurantId.toString() !== restaurantId) {
+      if (menuItem.data.restaurantId.toString() !== restaurantId) {
         return res.status(400).json({ message: `Menu item ${item.menuItemId} does not belong to the selected restaurant` });
       }
 
       itemsWithDetails.push({
-        menuItemId: menuItem._id,
-        name: menuItem.name,
-        price: menuItem.price,
+        menuItemId: menuItem.data._id,
+        name: menuItem.data.name,
+        price: menuItem.data.price,
         quantity: item.quantity,
         specialInstructions: item.specialInstructions
       });
