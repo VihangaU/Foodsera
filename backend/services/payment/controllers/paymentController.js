@@ -7,18 +7,18 @@ const Order_SERVICE_URL = 'http://order-service:5004';
 // Create a payment intent with Stripe
 exports.createPaymentIntent = async (req, res) => {
   try {
-    const { amount, orderId } = req.body;
-    
+    const { amount, orderId, userId } = req.body;
+
     // Create a payment intent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Stripe expects amounts in cents
       currency: 'usd',
       metadata: {
         orderId,
-        userId: req.user.id
+        userId
       }
     });
-    
+
     res.json({
       clientSecret: paymentIntent.client_secret
     });
@@ -32,28 +32,28 @@ exports.createPaymentIntent = async (req, res) => {
 exports.confirmPayment = async (req, res) => {
   try {
     const { paymentIntentId, orderId } = req.body;
-    
+
     // Verify payment intent exists
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
     if (!paymentIntent) {
       return res.status(404).json({ message: 'Payment not found' });
     }
-    
+
     // Verify payment intent is successful
     if (paymentIntent.status !== 'succeeded') {
       return res.status(400).json({ message: 'Payment not successful' });
     }
-    
+
     // Update order payment status
     const order = await axios.get(`${Order_SERVICE_URL}/api/orders/${orderId}`);
     // const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-    
+
     order.paymentStatus = 'completed';
     await order.save();
-    
+
     res.json({ message: 'Payment confirmed', order });
   } catch (error) {
     console.error('Error confirming payment:', error.message);
@@ -90,7 +90,7 @@ exports.getPaymentMethods = async (req, res) => {
         isDefault: false
       }
     ];
-    
+
     res.json(paymentMethods);
   } catch (error) {
     console.error('Error getting payment methods:', error.message);
@@ -102,31 +102,31 @@ exports.getPaymentMethods = async (req, res) => {
 exports.processRefund = async (req, res) => {
   try {
     const { orderId, amount, reason } = req.body;
-    
+
     // Find order
     const order = await axios.get(`${Order_SERVICE_URL}/api/orders/${orderId}`);
     // const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-    
+
     // Check if user is authorized (customer or restaurant owner)
-    if (req.user.role !== 'admin' && 
-        order.userId.toString() !== req.user.id && 
-        req.user.role !== 'restaurant') {
+    if (req.user.role !== 'admin' &&
+      order.userId.toString() !== req.user.id &&
+      req.user.role !== 'restaurant') {
       return res.status(403).json({ message: 'Not authorized' });
     }
-    
+
     // Check if order is already refunded
     if (order.paymentStatus === 'refunded') {
       return res.status(400).json({ message: 'Order already refunded' });
     }
-    
+
     // Process refund with Stripe (in a real app)
     // For this demo, we'll just update the order status
     order.paymentStatus = 'refunded';
     await order.save();
-    
+
     res.json({ message: 'Refund processed successfully', order });
   } catch (error) {
     console.error('Error processing refund:', error.message);
