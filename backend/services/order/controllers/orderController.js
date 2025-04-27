@@ -146,16 +146,16 @@ exports.updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     // Validate status based on role
-    const validStatusesForRestaurant = ['confirmed', 'preparing', 'ready', 'cancelled'];
-    const validStatusesForDelivery = ['in-delivery', 'delivered'];
+    // const validStatusesForRestaurant = ['confirmed', 'preparing', 'ready', 'cancelled'];
+    // const validStatusesForDelivery = ['in-delivery', 'delivered'];
 
-    if (req.user.role === 'restaurant' && !validStatusesForRestaurant.includes(status)) {
-      return res.status(400).json({ message: 'Invalid status for restaurant owner' });
-    }
+    // if (req.user.role === 'restaurant' && !validStatusesForRestaurant.includes(status)) {
+    //   return res.status(400).json({ message: 'Invalid status for restaurant owner' });
+    // }
 
-    if (req.user.role === 'delivery' && !validStatusesForDelivery.includes(status)) {
-      return res.status(400).json({ message: 'Invalid status for delivery driver' });
-    }
+    // if (req.user.role === 'delivery' && !validStatusesForDelivery.includes(status)) {
+    //   return res.status(400).json({ message: 'Invalid status for delivery driver' });
+    // }
 
     // Find order
     const order = await Order.findById(req.params.id);

@@ -1,4 +1,3 @@
-
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const axios = require('axios');
 
@@ -45,16 +44,17 @@ exports.confirmPayment = async (req, res) => {
     }
 
     // Update order payment status
-    const order = await axios.get(`${Order_SERVICE_URL}/api/orders/${orderId}`);
-    // const order = await Order.findById(orderId);
-    if (!order) {
+    const orderResponse = await axios.get(`${Order_SERVICE_URL}/api/orders/${orderId}`);
+    if (!orderResponse.data) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    order.paymentStatus = 'completed';
-    await order.save();
+    // Update the order status through the order service
+    await axios.put(`${Order_SERVICE_URL}/api/orders/${orderId}/status`, {
+      paymentStatus: 'completed'
+    });
 
-    res.json({ message: 'Payment confirmed', order });
+    res.json({ message: 'Payment confirmed', order: orderResponse.data });
   } catch (error) {
     console.error('Error confirming payment:', error.message);
     res.status(500).json({ message: 'Server error' });
