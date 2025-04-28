@@ -2,12 +2,12 @@ import { Cart, CartItem, MenuItem, Order, Restaurant, User } from './types';
 
 // Base API URLs for different services
 const API_URLS = {
-  auth: 'http://auth-service:5001/api',
-  admin: 'http://admin-service:5002/api',
-  delivery: 'http://delivery-service:5003/api',
-  order: 'http://order-service:5004/api',
-  payment: 'http://payment-service:5005/api',
-  restaurant: 'http://restaurent-service:5006/api'
+  auth: 'https://foodix.dynac.space/api/auth',
+  admin: 'https://foodix.dynac.space/api/admin',
+  delivery: 'https://foodix.dynac.space/api/delivery',
+  order: 'https://foodix.dynac.space/api/order',
+  payment: 'https://foodix.dynac.space/api/payment',
+  restaurant: 'https://foodix.dynac.space/api/restaurent'
 };
 
 // Get token from local storage
