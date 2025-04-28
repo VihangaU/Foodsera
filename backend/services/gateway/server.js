@@ -10,7 +10,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ['http://localhost:8082', 'https://foodix.dynac.space'],
+    origin: ['https://foodix.dynac.space', 'http://localhost:8082'],
     credentials: true,
   })
 );
@@ -23,8 +23,9 @@ const sessSettings = expressSession({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    secure: false,
+    secure: true,
     maxAge: 360000,
+    sameSite: 'none',
   },
 });
 app.use(sessSettings);
