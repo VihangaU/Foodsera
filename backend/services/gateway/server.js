@@ -23,9 +23,9 @@ const sessSettings = expressSession({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    secure: false,
+    secure: true,
     maxAge: 360000,
-    sameSite: 'lax',
+    sameSite: 'none',
   },
 });
 app.use(sessSettings);
