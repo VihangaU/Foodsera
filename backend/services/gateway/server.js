@@ -38,13 +38,11 @@ const proxyOptions = {
 };
 
 // Proxy routes
-// Gateway proxy configuration in your Express app
-app.use('/api/auth', proxy('http://auth-service:5001', proxyOptions));
-app.use('/api/delivery', proxy('http://delivery-service:5003', proxyOptions));
-app.use('/api/order', proxy('http://order-service:5004', proxyOptions));
-app.use('/api/restaurent', proxy('http://restaurent-service:5006', proxyOptions));
-app.use('/api/notification', proxy('http://notification-service:5007', proxyOptions));
-
+app.use('/auth-proxy', proxy('http://auth-service:5001', proxyOptions));
+app.use('/delivery-proxy', proxy('http://delivery-service:5003', proxyOptions));
+app.use('/order-proxy', proxy('http://order-service:5004', proxyOptions));
+app.use('/restaurent-proxy', proxy('http://restaurent-service:5006', proxyOptions));
+app.use('/notification-proxy', proxy('http://notification-service:5007', proxyOptions));
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'API Gateway is running!' });
