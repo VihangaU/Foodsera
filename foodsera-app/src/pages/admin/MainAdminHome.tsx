@@ -23,6 +23,45 @@ const MainAdminHome: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const [costomerCount, setCostomerCount] = useState<number>(0);
+  const [restaurantCount, setRestaurantCount] = useState<number>(0);
+  const [driverCount, setDriverCount] = useState<number>(0);
+  const [categoryCount, setCategoryCount] = useState<number>(0);
+
+
+  useEffect(() => {
+    const fetchDriverCount = async () => {
+      try {
+        const drivers = await adminAPI.getAllDrivers();
+        setDriverCount(drivers.length);
+      } catch (error) {
+        console.error('Error fetching driver count:', error);
+        toast({
+          title: "Error loading drivers",
+          description: "Could not fetch the driver count",
+          variant: "destructive"
+        });
+      }
+    };
+
+    const fetchCustomerCount = async () => {
+      try {
+        const customers = await adminAPI.getAllCustomers();
+        setCostomerCount(customers.length);
+      } catch (error) {
+        console.error('Error fetching customer count:', error);
+        toast({
+          title: "Error loading customers",
+          description: "Could not fetch the customer count",
+          variant: "destructive"
+        });
+      }
+    };
+
+    fetchCustomerCount();
+    fetchDriverCount();
+  }, []);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
@@ -39,7 +78,7 @@ const MainAdminHome: React.FC = () => {
             authAPI.getAllUsers('driver').then(users => users.length).catch(() => 0),
             restaurantAPI.getAllCategories().then(categories => categories.length).catch(() => 0)
           ]);
-          
+
           setStats({
             customers,
             restaurants,
@@ -80,7 +119,7 @@ const MainAdminHome: React.FC = () => {
             <Users className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.customers}</div>
+            <div className="text-2xl font-bold">{costomerCount}</div>
           </CardContent>
         </Card>
         <Card>
@@ -98,7 +137,7 @@ const MainAdminHome: React.FC = () => {
             <Truck className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.drivers}</div>
+            <div className="text-2xl font-bold">{driverCount}</div>
           </CardContent>
         </Card>
         <Card>

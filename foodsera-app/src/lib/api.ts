@@ -350,12 +350,12 @@ export const deliveryAPI = {
 export const adminAPI = {
   // Category management
   getAllCategories: async () => {
-    return fetchWithAuth('admin', '/admin/categories');
+    return fetchWithAuth('restaurant', '/restaurants/categories');
   },
 
   createCategory: async (categoryData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URLS.admin}/admin/categories`, {
+    const response = await fetch(`${API_URLS.restaurant}/restaurants/categories`, {
       method: 'POST',
       headers: {
         'x-auth-token': token || '',
@@ -375,7 +375,7 @@ export const adminAPI = {
 
   updateCategory: async (categoryId: string, categoryData: FormData) => {
     const token = getToken();
-    const response = await fetch(`${API_URLS.admin}/admin/categories/${categoryId}`, {
+    const response = await fetch(`${API_URLS.restaurant}/restaurants/categories/${categoryId}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token || '',
@@ -394,24 +394,24 @@ export const adminAPI = {
   },
 
   deleteCategory: async (categoryId: string) => {
-    return fetchWithAuth('admin', `/admin/categories/${categoryId}`, {
+    return fetchWithAuth('restaurant', `/restaurants/categories/${categoryId}`, {
       method: 'DELETE',
     });
   },
 
   // Restaurant management
   getAllRestaurants: async () => {
-    return fetchWithAuth('admin', '/restaurants');
+    return fetchWithAuth('restaurant', '/restaurants');
   },
 
   approveRestaurant: async (restaurantId: string) => {
-    return fetchWithAuth('admin', `/admin/restaurants/${restaurantId}/approve`, {
+    return fetchWithAuth('restaurant', `/restaurants/${restaurantId}/approve`, {
       method: 'PUT',
     });
   },
 
   suspendRestaurant: async (restaurantId: string) => {
-    return fetchWithAuth('admin', `/admin/restaurants/${restaurantId}/suspend`, {
+    return fetchWithAuth('restaurant', `/restaurants/${restaurantId}/suspend`, {
       method: 'PUT',
     });
   },

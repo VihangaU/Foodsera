@@ -32,9 +32,8 @@ const AUTH_SERVICE_URL = 'http://auth-service:5001';
 // Get all customers
 exports.getAllCustomers = async (req, res) => {
   try {
-
-    const customers = await axios.get(`${AUTH_SERVICE_URL}/api/auth/users/customer`);
-    return res.json(customers);
+    const response = await axios.get(`${AUTH_SERVICE_URL}/api/auth/users/customer`);
+    return res.json(response.data);
   } catch (error) {
     console.error('Error getting customers:', error);
     return res.status(500).json({ message: 'Server error' });
@@ -45,8 +44,8 @@ exports.getAllCustomers = async (req, res) => {
 exports.getAllDrivers = async (req, res) => {
   try {
 
-    const drivers = await axios.get(`${AUTH_SERVICE_URL}/api/auth/users/driver`);
-    return res.json(drivers);
+    const response = await axios.get(`${AUTH_SERVICE_URL}/api/auth/users/delivery`);
+    return res.json(response.data);
 
   } catch (error) {
     console.error('Error getting drivers:', error);

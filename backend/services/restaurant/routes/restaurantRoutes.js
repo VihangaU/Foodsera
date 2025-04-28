@@ -28,8 +28,6 @@ router.get('/categories', async (req, res) => {
 // Admin category management
 router.post(
   '/categories',
-  authMiddleware,
-  authorize(['main_admin', 'admin']),
   upload.single('image'),
   async (req, res) => {
     try {
@@ -66,8 +64,6 @@ router.post(
 
 router.put(
   '/categories/:id',
-  authMiddleware,
-  authorize(['main_admin', 'admin']),
   upload.single('image'),
   async (req, res) => {
     try {
@@ -107,8 +103,6 @@ router.put(
 
 router.delete(
   '/categories/:id',
-  authMiddleware,
-  authorize(['main_admin', 'admin']),
   async (req, res) => {
     try {
       const category = await Category.findByIdAndDelete(req.params.id);
