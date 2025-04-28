@@ -6,6 +6,11 @@ import RestaurantList from '@/components/home/RestaurantList';
 import { useQuery } from '@tanstack/react-query';
 import { restaurantAPI } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
+import deliveryImage from '../../public/delivery-image.png';
+import qualityImage from '../../public/quality-foods.png';
+import trackingImage from '../../public/live-tracking.png';
+import webAppImage from '../../public/webapp.png';
+import webAppImage2 from '../../public/app-back.png';
 
 const Index: React.FC = () => {
   const { data: restaurants, isLoading: isRestaurantsLoading } = useQuery({
@@ -103,9 +108,6 @@ const Index: React.FC = () => {
         </div>
       </section>
       
-      {/* Popular Restaurants */}
-      {renderRestaurantSection("Popular Restaurants", (r) => r.isOpen && r.rating >= 4.5)}
-      
       {/* All Restaurants */}
       {renderRestaurantSection("All Restaurants", (r) => r.isOpen)}
       
@@ -118,9 +120,9 @@ const Index: React.FC = () => {
             <div className="bg-white p-6 rounded-xl shadow-sm text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-foodix-100 flex items-center justify-center">
                 <img 
-                  src="/placeholder.svg" 
+                  src={deliveryImage} 
                   alt="Fast Delivery"
-                  className="w-8 h-8 object-contain"
+                  className="w-16 h-16 object-contain"
                 />
               </div>
               <h3 className="text-lg font-bold mb-2">Fast Delivery</h3>
@@ -132,9 +134,9 @@ const Index: React.FC = () => {
             <div className="bg-white p-6 rounded-xl shadow-sm text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-foodix-100 flex items-center justify-center">
                 <img 
-                  src="/placeholder.svg" 
+                  src={qualityImage} 
                   alt="Quality Food"
-                  className="w-8 h-8 object-contain"
+                  className="w-16 h-16 object-contain"
                 />
               </div>
               <h3 className="text-lg font-bold mb-2">Quality Food</h3>
@@ -146,9 +148,9 @@ const Index: React.FC = () => {
             <div className="bg-white p-6 rounded-xl shadow-sm text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-foodix-100 flex items-center justify-center">
                 <img 
-                  src="/placeholder.svg" 
+                  src={trackingImage} 
                   alt="Live Tracking"
-                  className="w-8 h-8 object-contain"
+                  className="w-12 h-12 object-contain"
                 />
               </div>
               <h3 className="text-lg font-bold mb-2">Live Tracking</h3>
@@ -166,33 +168,25 @@ const Index: React.FC = () => {
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <h2 className="text-3xl font-bold mb-4">
-                Get the Foodix App
+                Get the Foodix Web App
               </h2>
               <p className="text-xl mb-6 opacity-90">
-                Order food on the go with our mobile app. Available for iOS and Android.
+                Order food on the go with our mobile or laptop
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button className="bg-black rounded-lg px-6 py-3 flex items-center justify-center hover:bg-gray-900 transition-colors">
                   <img 
-                    src="/placeholder.svg" 
+                    src={webAppImage} 
                     alt="App Store"
-                    className="h-6 mr-2"
+                    className="h-6 mr-2 bg-white"
                   />
-                  <span>App Store</span>
-                </button>
-                <button className="bg-black rounded-lg px-6 py-3 flex items-center justify-center hover:bg-gray-900 transition-colors">
-                  <img 
-                    src="/placeholder.svg" 
-                    alt="Google Play"
-                    className="h-6 mr-2"
-                  />
-                  <span>Google Play</span>
+                  <span>Web App</span>
                 </button>
               </div>
             </div>
             <div className="md:w-1/3">
               <img 
-                src="/placeholder.svg" 
+                src={qualityImage} 
                 alt="Foodix App"
                 className="w-full rounded-lg shadow-xl"
               />
