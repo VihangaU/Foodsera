@@ -53,7 +53,7 @@ services:
       - "5003:5003"
     environment:
       - PORT=5003
-      - AUTH_SERVICE_URL=http://auth-service:5003 # Direct to auth-service
+      - AUTH_SERVICE_URL=http://auth-service:5001 # Direct to auth-service
     networks:
       - app-network
     healthcheck:
