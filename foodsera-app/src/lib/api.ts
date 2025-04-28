@@ -2,12 +2,12 @@ import { Cart, CartItem, MenuItem, Order, Restaurant, User } from './types';
 
 // Base API URLs for different services
 const API_URLS = {
-  auth: 'http://localhost:5001/api',
-  admin: 'http://localhost:5002/api',
-  delivery: 'http://localhost:5003/api',
-  order: 'http://localhost:5004/api',
-  payment: 'http://localhost:5005/api',
-  restaurant: 'http://localhost:5006/api'
+  auth: 'http://auth-service:5001/api',
+  admin: 'http://admin-service:5002/api',
+  delivery: 'http://delivery-service:5003/api',
+  order: 'http://order-service:5004/api',
+  payment: 'http://payment-service:5005/api',
+  restaurant: 'http://restaurent-service:5006/api'
 };
 
 // Get token from local storage
