@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+    spec:
+      containers:
+        - name: admin-service
+          image: techdilshan/admin-service:latest
+          ports:
+            - containerPort: 5002
+          env:
+            - name: PORT
+              value: "5002"
+          # You can add other environment variables if your service needs them (ex: DB URL, JWT secret, etc.)

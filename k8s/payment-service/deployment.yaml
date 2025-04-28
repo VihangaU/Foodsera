@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: techdilshan/payment-service:latest
+          ports:
+            - containerPort: 5005
+          env:
+            - name: PORT
+              value: "5005"
+          # You can add other environment variables if your service needs them (ex: DB URL, JWT secret, etc.)

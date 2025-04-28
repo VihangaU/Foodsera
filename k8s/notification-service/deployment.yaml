@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: techdilshan/notification-service:latest
+          ports:
+            - containerPort: 5007
+          env:
+            - name: PORT
+              value: "5007"
+          # You can add other environment variables if your service needs them (ex: DB URL, JWT secret, etc.)

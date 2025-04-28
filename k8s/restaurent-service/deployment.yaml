@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurent-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restaurent-service
+  template:
+    metadata:
+      labels:
+        app: restaurent-service
+    spec:
+      containers:
+        - name: restaurent-service
+          image: techdilshan/restaurent-service:latest
+          ports:
+            - containerPort: 5006
+          env:
+            - name: PORT
+              value: "5006"
+          # You can add other environment variables if your service needs them (ex: DB URL, JWT secret, etc.)

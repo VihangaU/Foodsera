@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delivery-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: delivery-service
+  template:
+    metadata:
+      labels:
+        app: delivery-service
+    spec:
+      containers:
+        - name: delivery-service
+          image: techdilshan/delivery-service:latest
+          ports:
+            - containerPort: 5003
+          env:
+            - name: PORT
+              value: "5003"
+          # You can add other environment variables if your service needs them (ex: DB URL, JWT secret, etc.)
