@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
         navigate('/main-admin');
         break;
       case 'restaurant':
-        navigate('/admin');
+        navigate('/admin/menu');
         break;
       case 'driver':
       case 'delivery':

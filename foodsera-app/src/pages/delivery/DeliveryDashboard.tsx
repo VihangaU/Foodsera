@@ -10,11 +10,11 @@ import NotFound from '@/pages/NotFound';
 const DeliveryDashboard: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth();
-  
+
   if (!user) {
     return null;
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="grid grid-cols-12 gap-0">
@@ -24,7 +24,7 @@ const DeliveryDashboard: React.FC = () => {
             <h2 className="font-bold">Delivery Dashboard</h2>
             <p className="text-sm text-gray-500">{user.name}</p>
           </div>
-          
+
           <nav className="py-4">
             <ul className="space-y-1">
               <li>
@@ -32,10 +32,9 @@ const DeliveryDashboard: React.FC = () => {
                   to="/delivery"
                   end
                   className={({ isActive }) =>
-                    `flex items-center px-4 py-3 text-sm ${
-                      isActive
-                        ? 'bg-foodix-50 text-foodix-600 font-medium border-r-2 border-foodix-600'
-                        : 'text-gray-700 hover:bg-gray-100'
+                    `flex items-center px-4 py-3 text-sm ${isActive
+                      ? 'bg-foodix-50 text-foodix-600 font-medium border-r-2 border-foodix-600'
+                      : 'text-gray-700 hover:bg-gray-100'
                     }`
                   }
                 >
@@ -47,10 +46,9 @@ const DeliveryDashboard: React.FC = () => {
                 <NavLink
                   to="/delivery/history"
                   className={({ isActive }) =>
-                    `flex items-center px-4 py-3 text-sm ${
-                      isActive
-                        ? 'bg-foodix-50 text-foodix-600 font-medium border-r-2 border-foodix-600'
-                        : 'text-gray-700 hover:bg-gray-100'
+                    `flex items-center px-4 py-3 text-sm ${isActive
+                      ? 'bg-foodix-50 text-foodix-600 font-medium border-r-2 border-foodix-600'
+                      : 'text-gray-700 hover:bg-gray-100'
                     }`
                   }
                 >
@@ -62,10 +60,9 @@ const DeliveryDashboard: React.FC = () => {
                 <NavLink
                   to="/delivery/profile"
                   className={({ isActive }) =>
-                    `flex items-center px-4 py-3 text-sm ${
-                      isActive
-                        ? 'bg-foodix-50 text-foodix-600 font-medium border-r-2 border-foodix-600'
-                        : 'text-gray-700 hover:bg-gray-100'
+                    `flex items-center px-4 py-3 text-sm ${isActive
+                      ? 'bg-foodix-50 text-foodix-600 font-medium border-r-2 border-foodix-600'
+                      : 'text-gray-700 hover:bg-gray-100'
                     }`
                   }
                 >
@@ -73,7 +70,7 @@ const DeliveryDashboard: React.FC = () => {
                   Profile
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink
                   to="/delivery/settings"
                   className={({ isActive }) =>
@@ -87,11 +84,11 @@ const DeliveryDashboard: React.FC = () => {
                   <Settings className="h-5 w-5 mr-3" />
                   Settings
                 </NavLink>
-              </li>
+              </li> */}
             </ul>
           </nav>
         </div>
-        
+
         {/* Main content */}
         <div className="col-span-12 md:col-span-9 lg:col-span-10">
           <div className="p-6">

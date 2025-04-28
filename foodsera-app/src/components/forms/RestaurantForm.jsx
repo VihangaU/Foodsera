@@ -96,7 +96,7 @@ const RestaurantForm = ({ onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!logoFile || !imageFile) {
       toast({
         variant: "destructive",
@@ -107,11 +107,11 @@ const RestaurantForm = ({ onSuccess }) => {
     }
 
     setIsLoading(true);
-    
+
     try {
       // Create FormData object to handle file uploads
       const submitFormData = new FormData();
-      
+
       // Add all text fields
       Object.keys(formData).forEach(key => {
         if (key === 'categories' && formData[key].length > 0) {
@@ -121,28 +121,28 @@ const RestaurantForm = ({ onSuccess }) => {
           submitFormData.append(key, formData[key]);
         }
       });
-      
+
       // Add files - ensure we're adding the actual File objects
       submitFormData.append('logo', logoFile);
       submitFormData.append('image', imageFile);
-      
+
       console.log('Submitting restaurant data...');
       // Debug FormData contents
       for (let [key, value] of submitFormData.entries()) {
         console.log(`${key}: ${value instanceof File ? `File: ${value.name}` : value}`);
       }
-      
+
       await createRestaurant(submitFormData);
-      
+
       toast({
         title: "Success",
         description: "Restaurant created successfully!",
       });
-      
+
       if (onSuccess) {
         onSuccess();
       }
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -156,7 +156,7 @@ const RestaurantForm = ({ onSuccess }) => {
       setImageFile(null);
       setLogoPreview('');
       setImagePreview('');
-      
+
     } catch (error) {
       console.error('Failed to create restaurant:', error);
       toast({
@@ -186,7 +186,7 @@ const RestaurantForm = ({ onSuccess }) => {
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
@@ -197,7 +197,7 @@ const RestaurantForm = ({ onSuccess }) => {
               required
             />
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="deliveryFee">Delivery Fee ($)</Label>
@@ -212,7 +212,7 @@ const RestaurantForm = ({ onSuccess }) => {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="deliveryTime">Delivery Time (minutes)</Label>
               <Input
@@ -226,7 +226,7 @@ const RestaurantForm = ({ onSuccess }) => {
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="address">Address</Label>
             <Input
@@ -237,7 +237,7 @@ const RestaurantForm = ({ onSuccess }) => {
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="categories">Categories</Label>
             <MultiSelect
@@ -265,15 +265,15 @@ const RestaurantForm = ({ onSuccess }) => {
               />
               {logoPreview && (
                 <div className="mt-2">
-                  <img 
-                    src={logoPreview} 
-                    alt="Logo Preview" 
-                    className="w-24 h-24 object-cover rounded-md" 
+                  <img
+                    src={logoPreview}
+                    alt="Logo Preview"
+                    className="w-24 h-24 object-cover rounded-md"
                   />
                 </div>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="image">Restaurant Image</Label>
               <Input
@@ -287,16 +287,16 @@ const RestaurantForm = ({ onSuccess }) => {
               />
               {imagePreview && (
                 <div className="mt-2">
-                  <img 
-                    src={imagePreview} 
-                    alt="Restaurant Image Preview" 
-                    className="w-full h-40 object-cover rounded-md" 
+                  <img
+                    src={imagePreview}
+                    alt="Restaurant Image Preview"
+                    className="w-full h-40 object-cover rounded-md"
                   />
                 </div>
               )}
             </div>
           </div>
-          
+
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? 'Creating...' : 'Create Restaurant'}
           </Button>

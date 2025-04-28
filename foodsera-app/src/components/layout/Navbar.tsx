@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -81,10 +81,10 @@ const Navbar: React.FC<NavbarProps> = ({ openCart, itemCount }) => {
 
           {/* Right side - cart, account */}
           <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative" 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative"
               onClick={openCart}
             >
               <ShoppingCart className="h-5 w-5" />
@@ -112,7 +112,7 @@ const Navbar: React.FC<NavbarProps> = ({ openCart, itemCount }) => {
                   <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
                   <DropdownMenuLabel className="text-xs text-gray-500">{user.role}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  
+
                   {user.role === 'customer' && (
                     <>
                       <DropdownMenuItem>
@@ -123,13 +123,13 @@ const Navbar: React.FC<NavbarProps> = ({ openCart, itemCount }) => {
                       </DropdownMenuItem>
                     </>
                   )}
-                  
+
                   {user.role === 'restaurant' && (
                     <DropdownMenuItem>
-                      <Link to="/admin" className="w-full">Restaurant Dashboard</Link>
+                      <Link to="/admin/menu" className="w-full">Restaurant Dashboard</Link>
                     </DropdownMenuItem>
                   )}
-                  
+
                   {user.role === 'main_admin' && (
                     <DropdownMenuItem>
                       <Link to="/main-admin" className="w-full">
@@ -138,13 +138,13 @@ const Navbar: React.FC<NavbarProps> = ({ openCart, itemCount }) => {
                       </Link>
                     </DropdownMenuItem>
                   )}
-                  
+
                   {user.role === 'driver' && (
                     <DropdownMenuItem>
                       <Link to="/delivery" className="w-full">Delivery Dashboard</Link>
                     </DropdownMenuItem>
                   )}
-                  
+
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" /> Logout

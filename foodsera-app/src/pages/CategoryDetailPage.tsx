@@ -13,17 +13,17 @@ interface CategoryDetailPageProps {
 
 const CategoryDetailPage: React.FC<CategoryDetailPageProps> = ({ addToCart }) => {
   const { id } = useParams<{ id: string }>();
-  
+
   const { data: categories, isLoading: isCategoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: restaurantAPI.getAllCategories
   });
-  
+
   const { data: restaurants, isLoading: isRestaurantsLoading } = useQuery({
     queryKey: ['restaurants'],
     queryFn: restaurantAPI.getAllRestaurants
   });
-  
+
   if (isCategoriesLoading || isRestaurantsLoading) {
     return (
       <div>
@@ -43,9 +43,9 @@ const CategoryDetailPage: React.FC<CategoryDetailPageProps> = ({ addToCart }) =>
       </div>
     );
   }
-  
+
   const category = categories?.find(c => c._id === id);
-  
+
   if (!category) {
     return (
       <div className="foodix-container py-20">
@@ -54,17 +54,17 @@ const CategoryDetailPage: React.FC<CategoryDetailPageProps> = ({ addToCart }) =>
       </div>
     );
   }
-  
+
   // Filter restaurants by category
-  const filteredRestaurants = restaurants?.filter(restaurant => 
+  const filteredRestaurants = restaurants?.filter(restaurant =>
     restaurant.categories.includes(category.name)
   ) || [];
-  
+
   return (
     <div>
       <div className="relative h-64 bg-gray-200">
-        <img 
-          src={category.image} 
+        <img
+          src={category.image}
           alt={category.name}
           className="w-full h-full object-cover"
         />
@@ -78,10 +78,10 @@ const CategoryDetailPage: React.FC<CategoryDetailPageProps> = ({ addToCart }) =>
           </div>
         </div>
       </div>
-      
+
       <div className="py-10">
         <div className="foodix-container">
-          <RestaurantList 
+          <RestaurantList
             title={`${category.name} Restaurants`}
             restaurants={filteredRestaurants}
           />
