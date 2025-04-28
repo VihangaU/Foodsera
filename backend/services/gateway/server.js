@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const expressSession = require('express-session');
 const proxy = require('express-http-proxy');
+const https = require('https');
+const fs = require('fs');
 
 require('dotenv').config();
 
@@ -23,7 +25,7 @@ const sessSettings = expressSession({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    secure: true,
+    secure: true, // Requires HTTPS
     maxAge: 360000,
     sameSite: 'none',
   },
@@ -49,6 +51,23 @@ app.get('/', (req, res) => {
   res.status(200).json({ message: 'API Gateway is running!' });
 });
 
-// Start server
+// Load SSL certificates
+const sslOptions = {
+  cert: fs.readFileSync('/certs/fullchain.pem'),
+  key: fs.readFileSync('/certs/privkey.pem'),
+};
+
+// Start HTTPS server
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, '0.0.0.0', () => console.log(`Gateway started at : ${PORT}`));
+https.createServer(sslOptions, app).listen(PORT, '0.0.0.0', () => {
+  console.log(`Gateway started at https://0.0.0.0:${PORT}`);
+});
+
+// Optional: Redirect HTTP to HTTPS
+const http = require('http');
+http.createServer((req, res) => {
+  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+  res.end();
+}).listen(80, '0.0.0.0', () => {
+  console.log('HTTP server redirecting to HTTPS on port 80');
+});
