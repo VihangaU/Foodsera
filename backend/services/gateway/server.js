@@ -10,7 +10,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: 'http://localhost:8082',
+    origin: ['http://localhost:8082', 'https://foodix.dynac.space'],
     credentials: true,
   })
 );
