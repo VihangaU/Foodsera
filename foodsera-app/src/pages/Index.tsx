@@ -11,6 +11,7 @@ import qualityImage from '../../public/quality-foods.png';
 import trackingImage from '../../public/live-tracking.png';
 import webAppImage from '../../public/webapp.png';
 import webAppImage2 from '../../public/app-back.png';
+import HomeLogo from '../../public/HomeLogo.jpg';
 
 const Index: React.FC = () => {
   const { data: restaurants, isLoading: isRestaurantsLoading } = useQuery({
@@ -186,7 +187,7 @@ const Index: React.FC = () => {
             </div>
             <div className="md:w-1/3">
               <img 
-                src={qualityImage} 
+                src={HomeLogo} 
                 alt="Foodix App"
                 className="w-full rounded-lg shadow-xl"
               />
