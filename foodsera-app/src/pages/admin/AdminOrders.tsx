@@ -19,9 +19,9 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Order, DeliveryDriver, MenuItem, User,  } from '@/lib/types';
+import { Order, DeliveryDriver, MenuItem, User } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
-import { orderAPI, restaurantAPI, deliveryAPI, authAPI } from '@/lib/api';
+import { orderAPI, restaurantAPI, deliveryAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Restaurant } from '@/lib/types';
@@ -221,8 +221,8 @@ const AdminOrders: React.FC = () => {
       // Find the order to get user email
       const order = orders.find(o => o._id === orderId);
       if (true) {
-        const user = await authAPI.getUserById(order?.userId);
-        await sendStatusEmail(user.email, newStatus, orderId);
+        await 
+        await sendStatusEmail('chamikamaths2002@gmail.com', newStatus, orderId);
       }
       
       toast({
@@ -263,8 +263,7 @@ const AdminOrders: React.FC = () => {
       // Find the order to get user email
       const order = orders.find(o => o._id === orderId);
       if (true) {
-        const user = await authAPI.getUserById(order?.userId);
-        await sendStatusEmail(user.email, 'in-delivery', orderId);
+        await sendStatusEmail('chamikamaths2002@gmail.com', 'in-delivery', orderId);
       }
       
       toast({
