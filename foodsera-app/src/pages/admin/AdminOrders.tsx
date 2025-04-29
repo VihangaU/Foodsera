@@ -19,13 +19,13 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Order, DeliveryDriver, MenuItem, User } from '@/lib/types';
+import { Order, DeliveryDriver, MenuItem, User,  } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
-import { orderAPI, restaurantAPI, deliveryAPI } from '@/lib/api';
+import { orderAPI, restaurantAPI, deliveryAPI, authAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Restaurant } from '@/lib/types';
-import {sendSMS} from '../../lib/sendSMS';
+import { sendSMS } from '../../lib/sendSMS';
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -56,6 +56,53 @@ const getStatusBadgeClass = (status: string) => {
       return 'bg-gray-100 text-gray-800';
     default:
       return 'bg-gray-100 text-gray-800';
+  }
+};
+
+// Email sending function
+const sendStatusEmail = async (to: string, status: string, orderId: string) => {
+  const statusMessages = {
+    confirmed: {
+      subject: 'Order Confirmed',
+      html: `<h1>Order #${orderId} Confirmed</h1><p>Your order has been confirmed and will be prepared soon.</p>`
+    },
+    preparing: {
+      subject: 'Order Being Prepared',
+      html: `<h1>Order #${orderId} In Preparation</h1><p>Your order is being prepared by our kitchen team.</p>`
+    },
+    ready: {
+      subject: 'Order Ready',
+      html: `<h1>Order #${orderId} Ready</h1><p>Your order is ready and awaiting driver assignment.</p>`
+    },
+    'in-delivery': {
+      subject: 'Order Assigned to Driver',
+      html: `<h1>Order #${orderId} In Delivery</h1><p>Your order has been assigned to a driver and is on its way.</p>`
+    }
+  };
+
+  try {
+    const response = await fetch('https://foodix.dynac.space:8081/notification-proxy/api/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to,
+        subject: statusMessages[status]?.subject || `Order Status Update: ${status}`,
+        html: statusMessages[status]?.html || `<h1>Order #${orderId} Status Update</h1><p>Your order status has changed to ${status}.</p>`
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send email');
+    }
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    toast({
+      title: "Email Notification Error",
+      description: "Status updated but failed to send email notification.",
+      variant: "destructive",
+    });
   }
 };
 
@@ -171,6 +218,13 @@ const AdminOrders: React.FC = () => {
         )
       );
       
+      // Find the order to get user email
+      const order = orders.find(o => o._id === orderId);
+      if (true) {
+        const user = await authAPI.getUserById(order?.userId);
+        await sendStatusEmail(user.email, newStatus, orderId);
+      }
+      
       toast({
         title: "Order status updated",
         description: `Order #${orderId} is now ${newStatus}`,
@@ -189,7 +243,6 @@ const AdminOrders: React.FC = () => {
   };
   
   const assignDriver = async (orderId: string, driverId: string) => {
-    console.log(orderId, driverId)
     try {
       // Call API to assign driver
       await orderAPI.assignDriver(orderId, driverId);
@@ -206,6 +259,13 @@ const AdminOrders: React.FC = () => {
             : order
         )
       );
+      
+      // Find the order to get user email
+      const order = orders.find(o => o._id === orderId);
+      if (true) {
+        const user = await authAPI.getUserById(order?.userId);
+        await sendStatusEmail(user.email, 'in-delivery', orderId);
+      }
       
       toast({
         title: "Driver assigned",
@@ -239,7 +299,6 @@ const AdminOrders: React.FC = () => {
   };
   
   if (isLoading) {
-    
     return (
       <div>
         <h1 className="text-2xl font-bold mb-6">Manage Orders</h1>
@@ -264,7 +323,6 @@ const AdminOrders: React.FC = () => {
   }
   
   if (error) {
-    
     return (
       <div className="text-center py-10">
         <h1 className="text-2xl font-bold mb-4">Manage Orders</h1>
@@ -403,7 +461,6 @@ const AdminOrders: React.FC = () => {
               <h3 className="font-medium mb-2">Order Items</h3>
               <div className="bg-gray-50 rounded-lg p-4">
                 {selectedOrder.items.map((item) => {
-                  
                   // Get menu item details from our cache
                   const menuItemDetails = menuItems[item.menuItemId];
                   
@@ -482,7 +539,6 @@ const AdminOrders: React.FC = () => {
                                 className="flex items-center justify-between p-3 border rounded-lg hover:border-foodix-500 cursor-pointer"
                                 onClick={() => {
                                   assignDriver(selectedOrder._id, driver.userId);
-                                  // console.log(driver.phone)
                                   sendSMS(driver.phone, `You have been assigned to order ${selectedOrder._id}`);
                                 }}
                               >
@@ -587,7 +643,7 @@ const AdminOrders: React.FC = () => {
                           size="sm"
                           onClick={() => setSelectedOrder(order)}
                         >
-                          View Details
+                        View Details
                         </Button>
                       </td>
                     </tr>

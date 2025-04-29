@@ -91,6 +91,10 @@ export const authAPI = {
     const queryString = role ? `?role=${role}` : '';
     return fetchWithAuth('auth', `/auth/users${queryString}`);
   },
+
+  getUserById: async (id: string) => {
+    return fetchWithAuth('auth', `/auth/users/${id}`);
+  },
 };
 
 // Restaurant API
