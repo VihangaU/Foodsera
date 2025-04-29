@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://chamikadilshan:FoodixDilshan@foodix.3lne8y5.mongodb.net/?retryWrites=true&w=majority&appName=foodix")
+mongoose.connect("mongodb+srv://FoodixA:FoodixAd@foodixadmin.7nz0ici.mongodb.net/?retryWrites=true&w=majority&appName=FoodixAdmin")
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
