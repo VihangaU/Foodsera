@@ -1,6 +1,6 @@
 // src/lib/sendSMS.jsx
 
-const API_URL = 'http://localhost:5007/api/send-sms'; // Update with your actual API URL
+const API_URL = 'https://foodix.dynac.space:8081/notification-proxy/api/send-sms'; // Update with your actual API URL
 
 // Function to send SMS
 export const sendSMS = async (to, message) => {

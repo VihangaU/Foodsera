@@ -46,6 +46,8 @@ app.use('/delivery-proxy', proxy('http://delivery-service:5003', proxyOptions));
 app.use('/order-proxy', proxy('http://order-service:5004', proxyOptions));
 app.use('/restaurent-proxy', proxy('http://restaurent-service:5006', proxyOptions));
 app.use('/notification-proxy', proxy('http://notification-service:5007', proxyOptions));
+app.use('/admin-proxy', proxy('http://admin-service:5002', proxyOptions));
+app.use('/payment-proxy', proxy('http://payment-service:5005', proxyOptions));
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'API Gateway is running!' });
