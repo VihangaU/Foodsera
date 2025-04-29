@@ -536,11 +536,11 @@ const AdminMenu: React.FC = () => {
         </Button>
 
         <Dialog open={isCreateRestaurantOpen} onOpenChange={setIsCreateRestaurantOpen}>
-          <DialogContent className="sm:max-w-[525px]">
-            <DialogHeader>
-              <DialogTitle>Create Restaurant</DialogTitle>
-              <DialogDescription>
-                Fill in the details to create your restaurant.
+          <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader className="sticky bg-white z-10 pb-4">
+              <DialogTitle className="text-lg font-bold">Create Your Restaurant</DialogTitle>
+              <DialogDescription className="text-sm text-gray-600">
+                Please fill in the details below to set up your restaurant.
               </DialogDescription>
             </DialogHeader>
 
@@ -714,11 +714,14 @@ const AdminMenu: React.FC = () => {
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="sticky bottom-0 bg-white pt-4 border-t">
               <Button variant="outline" onClick={() => setIsCreateRestaurantOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreateRestaurant} disabled={!restaurantFormData.name || !restaurantFormData.description || !logoFile || !imageFile}>
+              <Button 
+                onClick={handleCreateRestaurant} 
+                disabled={!restaurantFormData.name || !restaurantFormData.description || !logoFile || !imageFile}
+              >
                 Create Restaurant
               </Button>
             </DialogFooter>

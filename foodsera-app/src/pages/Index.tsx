@@ -101,14 +101,6 @@ const Index: React.FC = () => {
     <div>
       <Hero />
       
-      {/* Categories */}
-      <section className="py-10 bg-gray-50">
-        <div className="foodix-container">
-          <h2 className="text-2xl font-bold mb-6">Explore by Category</h2>
-          {renderCategoriesSection()}
-        </div>
-      </section>
-      
       {/* All Restaurants */}
       {renderRestaurantSection("All Restaurants", (r) => r.isOpen)}
       
